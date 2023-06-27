@@ -1,5 +1,5 @@
 # project dependencies
-from data_handling import CipherData, Rot, Status
+from data_handling import CipherData, RotType, Status
 
 # built-in dependencies
 import json
@@ -16,7 +16,7 @@ class FileHandling:
     def read_from_json(filepath: str) -> CipherData:
         with open(filepath) as file:
             data_dict = json.load(file)
-        data_dict['rot_type'] = Rot(data_dict['rot_type'])
+        data_dict['rot_type'] = RotType(data_dict['rot_type'])
         data_dict['status'] = Status(data_dict['status'])
         data_cipher = CipherData(**data_dict)
         return data_cipher
