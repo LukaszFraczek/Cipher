@@ -4,17 +4,23 @@ from data_handling import CipherData
 from file_handling import FileHandling
 
 # built-in dependencies
+from typing import Union
 
 
 class Manager:
     def __init__(self):
         self.__running = True
-        self.buffer: CipherData
+        self.buffer: Union[None, CipherData] = None
 
     def read_from_file(self) -> bool:
-        pass
-        # file_path = input('Input path of file to read:\n')
-        # FileHandling.read_from_json(self.b)
+        file_path = input('Input path of file to read:\n')
+        self.buffer = FileHandling.read_from_json(file_path)
+        return True
+
+    def save_to_file(self) -> bool:
+        file_path = input('Input path of new file:\n')
+        FileHandling.save_to_json(self.buffer, file_path)
+        return True
 
     def run(self):
         while self.__running:
@@ -22,9 +28,9 @@ class Manager:
             choice = Menu.user_input()
 
             if choice == '1':       # Read from file
-                pass
-            elif choice == '2':     # Write to file
-                pass
+                self.read_from_file()
+            elif choice == '2':     # Save to file
+                self.save_to_file()
             elif choice == '3':     # Encode
                 pass
             elif choice == '4':     # Decode
