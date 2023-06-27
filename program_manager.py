@@ -13,6 +13,14 @@ class Manager:
         self.buffer: Union[None, CipherData] = None
 
     def read_from_file(self) -> bool:
+        if self.buffer:
+            while True:
+                allowed_choices = ('Y', 'N')
+                choice = input('Overwrite data in buffer? [Y/N]').upper()
+                if choice in allowed_choices:
+                    break
+            if choice == 'N':
+                return False
         file_path = input('Input path of file to read:\n')
         self.buffer = FileHandling.read_from_json(file_path)
         return True
