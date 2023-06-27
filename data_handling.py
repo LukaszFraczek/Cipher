@@ -1,10 +1,11 @@
-from enum import Enum, auto
+from enum import Enum
 from dataclasses import dataclass
 
 
-class Rot(str, Enum):
+class RotType(str, Enum):
     ROT13 = 'ROT13'
     ROT47 = 'ROT47'
+    NONE = 'NONE'
 
 
 class Status(str, Enum):
@@ -15,7 +16,7 @@ class Status(str, Enum):
 @dataclass
 class CipherData:
     text: str
-    rot_type: Rot
+    rot_type: RotType
     status: Status
 
     def to_dict(self):
