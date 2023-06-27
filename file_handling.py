@@ -9,7 +9,7 @@ class FileHandling:
     @staticmethod
     def save_to_json(data: CipherData, filepath: str) -> bool:
         with open(filepath, 'w') as file:
-            json.dump(data, file)
+            json.dump(data.to_dict(), file)
         return True
 
     @staticmethod
