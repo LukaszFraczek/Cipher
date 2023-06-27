@@ -1,5 +1,5 @@
 # project dependencies
-from cipher_data import CipherData, Rot, Status
+from data_handling import CipherData, Rot, Status
 
 # built-in dependencies
 import json
