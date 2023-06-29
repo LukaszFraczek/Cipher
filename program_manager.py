@@ -1,7 +1,7 @@
 from typing import Union
 
 from menu import Menu
-from data_handling import Message
+from message import Message
 from file_handling import FileHandler
 
 
