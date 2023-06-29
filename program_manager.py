@@ -1,14 +1,14 @@
 from typing import Union
 
 from menu import Menu
-from data_handling import CipherMessage
+from data_handling import CipherData
 from file_handling import FileHandler
 
 
 class Manager:
     def __init__(self):
         self.__running = True
-        self.buffer: Union[None, CipherMessage] = None
+        self.buffer: Union[None, CipherData] = None
 
     def read_from_file(self) -> bool:
         if self.buffer:
