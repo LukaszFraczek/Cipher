@@ -14,7 +14,7 @@ class Status(str, Enum):
 
 
 @dataclass
-class CipherData:
+class CipherMessage:
     text: str
     rot_type: RotType
     status: Status
