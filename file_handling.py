@@ -1,6 +1,7 @@
 import json
 
-from message import Message, RotType, Status
+from message import Message
+from constants import RotType, Status
 
 
 class FileHandler:
