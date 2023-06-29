@@ -2,7 +2,7 @@ from typing import Union
 
 from menu import Menu
 from data_handling import CipherData
-from file_handling import FileHandling
+from file_handling import FileHandler
 
 
 class Manager:
@@ -20,12 +20,12 @@ class Manager:
             if choice == 'N':
                 return False
         file_path = input('Input path of file to read:\n')
-        self.buffer = FileHandling.read_from_json(file_path)
+        self.buffer = FileHandler.read_from_json(file_path)
         return True
 
     def save_to_file(self) -> bool:
         file_path = input('Input path of new file:\n')
-        FileHandling.save_to_json(self.buffer, file_path)
+        FileHandler.save_to_json(self.buffer, file_path)
         return True
 
     def run(self):

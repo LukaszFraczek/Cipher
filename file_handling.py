@@ -3,7 +3,7 @@ import json
 from data_handling import CipherData, RotType, Status
 
 
-class FileHandling:
+class FileHandler:
     @staticmethod
     def save_to_json(data: CipherData, filepath: str) -> bool:
         with open(filepath, 'w') as file:
