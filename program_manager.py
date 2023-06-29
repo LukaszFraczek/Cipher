@@ -1,10 +1,8 @@
-# project dependencies
+from typing import Union
+
 from menu import Menu
 from data_handling import CipherData
 from file_handling import FileHandling
-
-# built-in dependencies
-from typing import Union
 
 
 class Manager:

@@ -1,8 +1,6 @@
-# project dependencies
-from data_handling import CipherData, RotType, Status
-
-# built-in dependencies
 import json
+
+from data_handling import CipherData, RotType, Status
 
 
 class FileHandling:
