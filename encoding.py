@@ -8,8 +8,9 @@ class Rot13:
     __LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     __LETTERS_ROT13 = "nopqrstuvwxyzabcdefghijklmNOPQRSTUVWXYZABCDEFGHIJKLM"
 
-    def __translate_rot13(self, text: str) -> str:
-        trans_table = str.maketrans(self.__LETTERS, self.__LETTERS_ROT13)
+    @classmethod
+    def __translate_rot13(cls, text: str) -> str:
+        trans_table = str.maketrans(cls.__LETTERS, cls.__LETTERS_ROT13)
         output = text.translate(trans_table)
         return output
 
@@ -17,7 +18,7 @@ class Rot13:
     def encrypt(cls, data: Message) -> Message:
         if data.status == Status.ENCRYPTED:
             pass  # Raise encrypted error
-        # if data.rot_type != Rot.NONE:
+        # if data.rot_type != RotType.NONE:
         #   pass  # Raise wrong encryption type error
 
         result = copy(data)
@@ -28,11 +29,30 @@ class Rot13:
 
     @classmethod
     def decrypt(cls, data: Message) -> Message:
-        pass
+        if data.status == Status.DECRYPTED:
+            pass  # Raise encrypted error
+        # if data.rot_type != RotType.NONE:
+        #   pass  # Raise wrong encryption type error
+
+        result = copy(data)
+        result.text = cls.__translate_rot13(data.text)
+        result.rot_type = RotType.NONE
+        result.status = Status.DECRYPTED
+        return data
 
 
 class Rot47:
-    pass
+    @classmethod
+    def translate_rot47(cls, text: str) -> str:
+        output = ''
+        for letter in text:
+            letter_ucp = ord(letter)
+            if 33 <= letter_ucp <= 79:
+                letter_ucp += 47
+            elif 80 <= letter_ucp <= 126:
+                letter_ucp -= 47
+            output += chr(letter_ucp)
+        return output
 
 
 
