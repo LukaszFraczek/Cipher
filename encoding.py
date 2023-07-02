@@ -43,7 +43,7 @@ class Rot13:
 
 class Rot47:
     @classmethod
-    def translate_rot47(cls, text: str) -> str:
+    def __translate(cls, text: str) -> str:
         output = ''
         for letter in text:
             letter_ucp = ord(letter)
@@ -54,5 +54,29 @@ class Rot47:
             output += chr(letter_ucp)
         return output
 
+    @classmethod
+    def encrypt(cls, data: Message) -> Message:
+        if data.status == Status.ENCRYPTED:
+            pass  # Raise encrypted error
+        # if data.rot_type != RotType.NONE:
+        #   pass  # Raise wrong encryption type error
 
+        result = copy(data)
+        result.text = cls.__translate(data.text)
+        result.rot_type = RotType.ROT47
+        result.status = Status.ENCRYPTED
+        return data
+
+    @classmethod
+    def decrypt(cls, data: Message) -> Message:
+        if data.status == Status.DECRYPTED:
+            pass  # Raise encrypted error
+        # if data.rot_type != RotType.NONE:
+        #   pass  # Raise wrong encryption type error
+
+        result = copy(data)
+        result.text = cls.__translate(data.text)
+        result.rot_type = RotType.NONE
+        result.status = Status.DECRYPTED
+        return data
 
