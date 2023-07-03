@@ -1,6 +1,9 @@
+from program_manager import Manager
+
 
 def main():
-    pass
+    program = Manager()
+    program.run()
 
 
 if __name__ == '__main__':

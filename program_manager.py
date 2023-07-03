@@ -19,7 +19,7 @@ class Manager:
         )
 
     def placeholder(self):
-        pass
+        print("I am a placeholder!")
 
     def read_from_file(self) -> bool:
         if self.buffer:
