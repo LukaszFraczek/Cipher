@@ -3,6 +3,8 @@ from typing import Union
 from menu import Menu, MenuItem, Dialog, DialogItem
 from message import Message
 from file_handling import FileHandler
+from encoding import Rot13, Rot47
+from constants import RotType
 
 
 class Manager:
@@ -10,36 +12,69 @@ class Manager:
         self.__running = True
         self.buffer: Union[None, Message] = None
 
+        # create a main menu
         self.main_menu = Menu(
+            'MAIN MENU',
             MenuItem('1', 'Read messages from file', self.read_from_file),
             MenuItem('2', 'Save messages to file', self.save_to_file),
-            MenuItem('3', 'Decode message', self.placeholder),
-            MenuItem('4', 'Encode message', self.placeholder),
+            MenuItem('3', 'Decode message', self.decode_message),
+            MenuItem('4', 'Encode message', self.encode_message),
+            MenuItem('5', 'Show messages', self.show_messages),
             MenuItem('9', 'Exit', self.stop)
         )
 
-    def placeholder(self):
-        print("I am a placeholder!")
+        # create an encoding option menu
+        self.encode_message_menu = Menu(
+            'ENCODE MESSAGE',
+            MenuItem('1', 'Rot13', lambda: RotType.ROT13),
+            MenuItem('2', 'Rot47', lambda: RotType.ROT47),
+        )
 
-    def read_from_file(self) -> bool:
+        # create a read file dialog
+        self.read_dialog = Dialog(
+            'Overwrite data in buffer?',
+            DialogItem('Y', lambda: True),
+            DialogItem('N', lambda: False),
+        )
+
+    def read_from_file(self) -> None:
         if self.buffer:
-            read_dialog = Dialog(
-                'Overwrite data in buffer?',
-                DialogItem('Y', lambda: True),
-                DialogItem('N', lambda: False),
-            )
-            read_dialog.display()
-            if not read_dialog.select():
-                return False
-
+            self.read_dialog.display()
+            if not self.read_dialog.select():
+                return
         file_path = input('Input path of file to read:\n')
         self.buffer = FileHandler.read_from_json(file_path)
-        return True
 
-    def save_to_file(self) -> bool:
+    def save_to_file(self) -> None:
         file_path = input('Input path of new file:\n')
         FileHandler.save_to_json(self.buffer, file_path)
-        return True
+
+    def decode_message(self) -> None:
+        rot_type = self.buffer.rot_type
+        if rot_type == RotType.ROT13:
+            self.buffer = Rot13.decrypt(self.buffer)
+        elif rot_type == RotType.ROT47:
+            self.buffer = Rot47.decrypt(self.buffer)
+        elif rot_type == RotType.NONE:
+            print("Message not encrypted!")
+            return
+        else:
+            raise Exception
+        print(f'Message decrypted successfully from {rot_type}.')
+
+    def encode_message(self) -> None:
+        self.encode_message_menu.display()
+        rot_type = self.encode_message_menu.select()
+
+        if rot_type == RotType.ROT13:
+            self.buffer = Rot13.encrypt(self.buffer)
+        elif rot_type == RotType.ROT47:
+            self.buffer = Rot47.encrypt(self.buffer)
+        else:
+            raise Exception
+
+    def show_messages(self) -> None:
+        print(self.buffer)
 
     def run(self):
         while self.__running:
