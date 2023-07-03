@@ -10,12 +10,14 @@ class MenuItem:
 
 
 class Menu:
-    def __init__(self, *items: MenuItem):
+    def __init__(self, title: str, *items: MenuItem):
         self._ALLOWED_INPUTS = tuple([item.option for item in items])
         self._MENU_ITEMS = tuple([item for item in items])
         self._MSG_INVALID = "Invalid selection!"
+        self._TITLE = title
 
     def display(self) -> None:
+        print(self._TITLE)
         for item in self._MENU_ITEMS:
             print(f'{item.option}. {item.description}')
 
