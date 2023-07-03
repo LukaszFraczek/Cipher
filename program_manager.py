@@ -4,7 +4,7 @@ from menu import Menu, MenuItem, Dialog, DialogItem
 from message import Message
 from file_handling import FileHandler
 from encoding import Rot13, Rot47
-from constants import RotType
+from constants import RotType, Status
 
 
 class Manager:
@@ -15,11 +15,12 @@ class Manager:
         # create a main menu
         self.main_menu = Menu(
             'MAIN MENU',
-            MenuItem('1', 'Read messages from file', self.read_from_file),
-            MenuItem('2', 'Save messages to file', self.save_to_file),
-            MenuItem('3', 'Decode message', self.decode_message),
-            MenuItem('4', 'Encode message', self.encode_message),
-            MenuItem('5', 'Show messages', self.show_messages),
+            MenuItem('1', 'Read message from file', self.read_from_file),
+            MenuItem('2', 'Save message to file', self.save_to_file),
+            MenuItem('3', 'New message', self.new_message),
+            MenuItem('4', 'Decode message', self.decode_message),
+            MenuItem('5', 'Encode message', self.encode_message),
+            MenuItem('6', 'Show message', self.show_messages),
             MenuItem('9', 'Exit', self.stop)
         )
 
@@ -72,6 +73,14 @@ class Manager:
             self.buffer = Rot47.encrypt(self.buffer)
         else:
             raise Exception
+
+    def new_message(self) -> None:
+        if self.buffer:
+            self.read_dialog.display()
+            if not self.read_dialog.select():
+                return
+        text = input('Input new message:\n')
+        self.buffer = Message(text, RotType.NONE, Status.DECRYPTED)
 
     def show_messages(self) -> None:
         print(self.buffer)
