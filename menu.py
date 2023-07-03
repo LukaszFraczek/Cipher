@@ -30,6 +30,6 @@ class Menu:
             break
         return index
 
-    def choice(self) -> None:
+    def select(self) -> None:
         self._MENU_ITEMS[self._user_input()].function()
 

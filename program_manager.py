@@ -1,6 +1,6 @@
 from typing import Union
 
-from menu import Menu
+from menu import Menu, MenuItem
 from message import Message
 from file_handling import FileHandler
 
@@ -9,6 +9,17 @@ class Manager:
     def __init__(self):
         self.__running = True
         self.buffer: Union[None, Message] = None
+
+        self.main_menu = Menu(
+            MenuItem('1', 'Read messages from file', self.read_from_file),
+            MenuItem('2', 'Save messages to file', self.save_to_file),
+            MenuItem('3', 'Decode message', self.placeholder),
+            MenuItem('4', 'Encode message', self.placeholder),
+            MenuItem('9', 'Exit', self.stop)
+        )
+
+    def placeholder(self):
+        pass
 
     def read_from_file(self) -> bool:
         if self.buffer:
@@ -30,21 +41,8 @@ class Manager:
 
     def run(self):
         while self.__running:
-            Menu.show_main_menu()
-            choice = Menu.user_input()
+            self.main_menu.show()
+            self.main_menu.select()
 
-            if choice == '1':       # Read from file
-                self.read_from_file()
-            elif choice == '2':     # Save to file
-                self.save_to_file()
-            elif choice == '3':     # Encode
-                pass
-            elif choice == '4':     # Decode
-                pass
-            elif choice == '9':     # Exit
-                self.__running = False
-            else:
-                pass
-
-    def cleanup(self):
-        pass
+    def stop(self):
+        self.__running = False
