@@ -1,6 +1,6 @@
 from typing import Union
 
-from menu import Menu, MenuItem
+from menu import Menu, MenuItem, Dialog, DialogItem
 from message import Message
 from file_handling import FileHandler
 
@@ -23,13 +23,15 @@ class Manager:
 
     def read_from_file(self) -> bool:
         if self.buffer:
-            while True:
-                allowed_choices = ('Y', 'N')
-                choice = input('Overwrite data in buffer? [Y/N]').upper()
-                if choice in allowed_choices:
-                    break
-            if choice == 'N':
+            read_dialog = Dialog(
+                'Overwrite data in buffer?',
+                DialogItem('Y', lambda: True),
+                DialogItem('N', lambda: False),
+            )
+            read_dialog.display()
+            if not read_dialog.select():
                 return False
+
         file_path = input('Input path of file to read:\n')
         self.buffer = FileHandler.read_from_json(file_path)
         return True
@@ -41,7 +43,7 @@ class Manager:
 
     def run(self):
         while self.__running:
-            self.main_menu.show()
+            self.main_menu.display()
             self.main_menu.select()
 
     def stop(self):
