@@ -27,5 +27,5 @@ class MessageBuffer:
             self.memory.append(obj_msg)
 
     def remove(self, idx_to_dlt) -> None:
-        del self.memory[idx_to_dlt - 1]  # try for IndexError
+        del self.memory[idx_to_dlt]
 
