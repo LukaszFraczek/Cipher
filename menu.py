@@ -3,6 +3,12 @@ from dataclasses import dataclass
 
 
 @dataclass
+class MenuMessages:
+    MSG_INVALID_INPUT = 'Invalid input!'
+    MSG_INVALID_SELECTION = "Invalid selection!"
+
+
+@dataclass
 class MenuItem:
     option: str
     description: str
@@ -13,7 +19,6 @@ class Menu:
     def __init__(self, title: str, *items: MenuItem):
         self._ALLOWED_INPUTS = tuple([item.option for item in items])
         self._MENU_ITEMS = tuple([item for item in items])
-        self._MSG_INVALID = "Invalid selection!"
         self._TITLE = title
 
     def display(self) -> None:
@@ -27,7 +32,7 @@ class Menu:
             try:
                 index = self._ALLOWED_INPUTS.index(user_input)
             except ValueError:
-                print(self._MSG_INVALID)
+                print(MenuMessages.MSG_INVALID_SELECTION)
                 continue
             break
         return index
@@ -46,7 +51,6 @@ class Dialog:
     def __init__(self, message: str, *items: DialogItem):
         self._ALLOWED_INPUTS = tuple([item.option for item in items])
         self._DIALOG_ITEMS = tuple([item for item in items])
-        self._MSG_INVALID = "Invalid selection!"
         self._MESSAGE = message
 
     def display(self) -> None:
@@ -63,7 +67,7 @@ class Dialog:
             try:
                 index = self._ALLOWED_INPUTS.index(user_input)
             except ValueError:
-                print(self._MSG_INVALID)
+                print(MenuMessages.MSG_INVALID_SELECTION)
                 continue
             break
         return index
