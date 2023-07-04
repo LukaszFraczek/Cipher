@@ -4,9 +4,11 @@ from dataclasses import dataclass
 
 @dataclass
 class MenuMessages:
-    MSG_INVALID_INPUT = 'Invalid input!'
-    MSG_INVALID_SELECTION = "Invalid selection!"
-    MSG_SAVE_PATH = 'Input file path:\n'
+    INVALID_INPUT = 'Invalid input!'
+    INVALID_SELECTION = "Invalid selection!"
+    INPUT_PATH = 'Input file path:\n'
+    MSG_ENCODED = 'Message successfully encoded!'
+
 
 
 @dataclass
@@ -19,12 +21,12 @@ class MenuItem:
 class Menu:
     def __init__(self, title: str, *items: MenuItem):
         self._ALLOWED_INPUTS = tuple([item.option for item in items])
-        self._MENU_ITEMS = tuple([item for item in items])
+        self._ITEMS = tuple([item for item in items])
         self._TITLE = title
 
     def display(self) -> None:
         print(self._TITLE)
-        for item in self._MENU_ITEMS:
+        for item in self._ITEMS:
             print(f'{item.option}. {item.description}')
 
     def _user_input(self) -> int:
@@ -33,13 +35,13 @@ class Menu:
             try:
                 index = self._ALLOWED_INPUTS.index(user_input)
             except ValueError:
-                print(MenuMessages.MSG_INVALID_SELECTION)
+                print(MenuMessages.INVALID_SELECTION)
                 continue
             break
         return index
 
     def select(self):
-        return self._MENU_ITEMS[self._user_input()].function()
+        return self._ITEMS[self._user_input()].function()
 
 
 @dataclass
@@ -51,7 +53,7 @@ class DialogItem:
 class Dialog:
     def __init__(self, message: str, *items: DialogItem):
         self._ALLOWED_INPUTS = tuple([item.option for item in items])
-        self._DIALOG_ITEMS = tuple([item for item in items])
+        self._ITEMS = tuple([item for item in items])
         self._MESSAGE = message
 
     def display(self) -> None:
@@ -68,11 +70,11 @@ class Dialog:
             try:
                 index = self._ALLOWED_INPUTS.index(user_input)
             except ValueError:
-                print(MenuMessages.MSG_INVALID_SELECTION)
+                print(MenuMessages.INVALID_SELECTION)
                 continue
             break
         return index
 
     def select(self):
-        return self._DIALOG_ITEMS[self._user_input()].function()
+        return self._ITEMS[self._user_input()].function()
 
