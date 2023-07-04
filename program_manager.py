@@ -14,12 +14,13 @@ class Manager:
         # create a main menu
         self.main_menu = Menu(
             'MAIN MENU',
-            MenuItem('1', 'Read message from file', self.read_from_file),
-            MenuItem('2', 'Save message to file', self.save_to_file),
+            MenuItem('1', 'Read messages from file', self.read_from_file),
+            MenuItem('2', 'Save messages to file', self.save_to_file),
             MenuItem('3', 'New message', self.new_message),
-            MenuItem('4', 'Decode message', self.decode_message),
-            MenuItem('5', 'Encode message', self.encode_message),
-            MenuItem('6', 'Show message', self.show_messages),
+            MenuItem('4', 'Delete message', self.delete_message),
+            MenuItem('5', 'Decode message', self.decode_message),
+            MenuItem('6', 'Encode message', self.encode_message),
+            MenuItem('7', 'Show messages', self.show_messages),
             MenuItem('9', 'Exit', self.stop)
         )
 
@@ -38,7 +39,7 @@ class Manager:
         )
 
     def read_from_file(self) -> None:
-        file_path = input('Input path of file to read:\n')
+        file_path = input(MenuMessages.INPUT_PATH)
         file_msg_buffer = FileHandler.read_from_json(file_path)
 
         for file_msg in file_msg_buffer.memory:
@@ -48,7 +49,7 @@ class Manager:
         self.save_dialog.display()
         if self.save_dialog.select():
             # Save all messages
-            file_path = input(MenuMessages.MSG_SAVE_PATH)
+            file_path = input(MenuMessages.INPUT_PATH)
             FileHandler.save_to_json(self.buffer, file_path)
             return
 
@@ -57,19 +58,19 @@ class Manager:
             msg_idx = int(input('Input message number to save:\n'))
             msg_to_save = self.buffer.memory[msg_idx - 1]
         except ValueError or IndexError:
-            print(MenuMessages.MSG_INVALID_INPUT)
+            print(MenuMessages.INVALID_INPUT)
             return
 
         # need file path check later
-        file_path = input(MenuMessages.MSG_SAVE_PATH)
+        file_path = input(MenuMessages.INPUT_PATH)
         FileHandler.save_to_json(MessageBuffer(msg_to_save), file_path)
 
     def decode_message(self) -> None:
         try:
-            msg_idx = int(input('Input message number to decode:\n'))
+            msg_idx = int(input(f'Input message number [1-{len(self.buffer)}] to decode:\n'))
             msg_to_decode = self.buffer.memory[msg_idx - 1]
         except ValueError or IndexError:
-            print(MenuMessages.MSG_INVALID_INPUT)
+            print(MenuMessages.INVALID_INPUT)
             return
 
         rot = msg_to_decode.rot_type
@@ -87,13 +88,12 @@ class Manager:
 
     def encode_message(self) -> None:
         try:
-            msg_idx = int(input('Input message number to encode:\n'))
+            msg_idx = int(input(f'Input message number [1-{len(self.buffer)}] to encode:\n'))
             msg_to_encode = self.buffer.memory[msg_idx - 1]
-        except ValueError:
-            print(MenuMessages.MSG_INVALID_INPUT)
-            return
-        except IndexError:
-            print(MenuMessages.MSG_INVALID_INPUT)
+            if msg_idx < 1:
+                raise ValueError
+        except ValueError or IndexError:
+            print(MenuMessages.INVALID_INPUT)
             return
 
         self.encode_message_menu.display()
@@ -106,10 +106,21 @@ class Manager:
         else:
             # create new exception for this
             raise Exception
+        print(MenuMessages.MSG_ENCODED)
 
     def new_message(self) -> None:
         new_msg = input('Input new message:\n')
         self.buffer.add(Message(new_msg, RotType.NONE, Status.DECRYPTED))
+
+    def delete_message(self) -> None:
+        try:
+            msg_idx = int(input(f'Input message number [1-{len(self.buffer)}] to encode:\n'))
+            if msg_idx < 1:
+                raise ValueError
+        except ValueError or IndexError:
+            print(MenuMessages.INVALID_INPUT)
+            return
+        self.buffer.remove(msg_idx - 1)
 
     def show_messages(self) -> None:
         self.buffer.display_all()
