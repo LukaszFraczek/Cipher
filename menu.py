@@ -6,6 +6,7 @@ from dataclasses import dataclass
 class MenuMessages:
     MSG_INVALID_INPUT = 'Invalid input!'
     MSG_INVALID_SELECTION = "Invalid selection!"
+    MSG_SAVE_PATH = 'Input file path:\n'
 
 
 @dataclass
