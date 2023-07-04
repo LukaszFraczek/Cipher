@@ -7,6 +7,9 @@ class Buffer:
     def __init__(self):
         self._memory: List[Message] = []
 
+    def __len__(self):
+        return len(self._memory)
+
     def display_all(self):
         for idx, msg in enumerate(self._memory, 1):
             print(f'{idx}. Status: {msg.status}, Encryption: {msg.rot_type}')
