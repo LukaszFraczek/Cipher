@@ -1,6 +1,7 @@
-from typing import List
+from typing import Union, List, Dict
 
 from message import Message
+from constants import RotType, Status
 
 
 class MessageBuffer:
@@ -15,8 +16,15 @@ class MessageBuffer:
             print(f'{idx}. Status: {msg.status}, Encryption: {msg.rot_type}')
             print(msg.text)
 
-    def add(self, msg: Message) -> None:
-        self.memory.append(msg)
+    def add(self, msg: Union[Message, Dict[str, str]]) -> None:
+        if isinstance(msg, Message):
+            self.memory.append(msg)
+        elif isinstance(msg, Dict):
+            # check for correct dict format?
+            msg['rot_type'] = RotType(msg['rot_type'])
+            msg['status'] = Status(msg['status'])
+            obj_msg = Message(**msg)
+            self.memory.append(obj_msg)
 
     def remove(self, idx_to_dlt) -> None:
         del self.memory[idx_to_dlt - 1]  # try for IndexError
