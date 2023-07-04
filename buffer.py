@@ -5,8 +5,8 @@ from constants import RotType, Status
 
 
 class MessageBuffer:
-    def __init__(self):
-        self.memory: List[Message] = []
+    def __init__(self, *messages: Message):
+        self.memory: List[Message] = [*messages]
 
     def __len__(self):
         return len(self.memory)
