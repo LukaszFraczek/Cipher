@@ -14,19 +14,22 @@ class FileHandler:
             with open(filepath) as file:
                 msg_list = json.load(file)
 
-        for msg in msg_buffer.memory:
-            msg_list.append(msg.to_dict())
+        msg_list.extend(msg_buffer.convert_memory_to_dict())
 
         with open(filepath, 'w') as file:
             json.dump(msg_list, file, indent=4, separators=(',', ': '))
 
     @staticmethod
-    def read_from_json(filepath: str) -> MessageBuffer:
+    def read_from_json(filepath: str) -> MessageBuffer: # TODO Change returned type for correct one.
         with open(filepath) as file:
-            msg_list: List[Message] = json.load(file)
+            msg_list: List[Message] = json.load(file) #TODO DICT type
 
-        buffer = MessageBuffer()
-        for msg in msg_list:
-            buffer.add(msg)
 
-        return buffer
+        return msg_list
+
+
+        # buffer = MessageBuffer()
+        # for msg in msg_list:
+        #     buffer.add(msg)
+        #
+        # return buffer

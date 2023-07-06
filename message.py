@@ -15,3 +15,9 @@ class Message:
     def to_dict(self):
         _dict = self.__dict__.copy()
         return _dict
+
+    @classmethod
+    def create_from_dct(cls, loaded_item: dict):
+        #     msg['rot_type'] = RotType(msg['rot_type'])
+        #     msg['status'] = Status(msg['status'])
+        pass

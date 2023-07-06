@@ -42,8 +42,9 @@ class Manager:
         file_path = input(MenuMessages.INPUT_PATH)
         file_msg_buffer = FileHandler.read_from_json(file_path)
 
-        for file_msg in file_msg_buffer.memory:
-            self.buffer.add(file_msg)
+        for file_msg in file_msg_buffer:
+            # text = Text.create_from_dct(file_msg)
+            self.buffer.add(file_msg) # self.buffer.add(Text.create_from_dct(file_msg)))
 
     def save_to_file(self) -> None:
         self.save_dialog.display()
@@ -69,7 +70,7 @@ class Manager:
         try:
             msg_idx = int(input(f'Input message number [1-{len(self.buffer)}] to decode:\n'))
             msg_to_decode = self.buffer.memory[msg_idx - 1]
-        except ValueError or IndexError:
+        except (ValueError, IndexError):
             print(MenuMessages.INVALID_INPUT)
             return
 
@@ -86,26 +87,40 @@ class Manager:
             raise Exception
         print(f'Message decrypted successfully from {rot}.')
 
+
+    def get_message_to_encode(self) -> tuple[int, Message]:
+        msg_idx = int(input(f'Input message number [1-{len(self.buffer)}] to encode:\n'))
+        if msg_idx < 1 or msg_idx > len(self.buffer):
+            raise ValueError('Invalid msg')
+
+        return msg_idx, self.buffer.memory[msg_idx - 1]
+
+    def select_encoding(self) -> str:
+        self.encode_message_menu.display()
+        return self.encode_message_menu.select()
+
+
     def encode_message(self) -> None:
         try:
-            msg_idx = int(input(f'Input message number [1-{len(self.buffer)}] to encode:\n'))
-            msg_to_encode = self.buffer.memory[msg_idx - 1]
-            if msg_idx < 1:
-                raise ValueError
-        except ValueError or IndexError:
+            msg_idx, msg_to_encode = self.get_message_to_encode()
+            # msg_idx = int(input(f'Input message number [1-{len(self.buffer)}] to encode:\n'))
+            # msg_to_encode = self.buffer.memory[msg_idx - 1]
+            # if msg_idx < 1:
+            #     raise ValueError
+        except ValueError:
             print(MenuMessages.INVALID_INPUT)
             return
 
-        self.encode_message_menu.display()
-        rot = self.encode_message_menu.select()
+        rot = self.select_encoding()
 
         if rot == RotType.ROT13:
-            self.buffer.memory[msg_idx - 1] = Rot13.encrypt(msg_to_encode)
+            encoded_msg = Rot13.encrypt(msg_to_encode)
         elif rot == RotType.ROT47:
-            self.buffer.memory[msg_idx - 1] = Rot47.encrypt(msg_to_encode)
+            encoded_msg = Rot47.encrypt(msg_to_encode)
         else:
             # create new exception for this
             raise Exception
+        self.buffer.memory[msg_idx - 1] = encoded_msg
         print(MenuMessages.MSG_ENCODED)
 
     def new_message(self) -> None:
@@ -117,7 +132,7 @@ class Manager:
             msg_idx = int(input(f'Input message number [1-{len(self.buffer)}] to encode:\n'))
             if msg_idx < 1:
                 raise ValueError
-        except ValueError or IndexError:
+        except (ValueError, IndexError):
             print(MenuMessages.INVALID_INPUT)
             return
         self.buffer.remove(msg_idx - 1)

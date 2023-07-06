@@ -16,16 +16,19 @@ class MessageBuffer:
             print(f'{idx}. Status: {msg.status}, Encryption: {msg.rot_type}')
             print(msg.text)
 
-    def add(self, msg: Union[Message, Dict[str, str]]) -> None:
+    def add(self, msg: Message) -> None:
         if isinstance(msg, Message):
             self.memory.append(msg)
-        elif isinstance(msg, Dict):
-            # check for correct dict format?
-            msg['rot_type'] = RotType(msg['rot_type'])
-            msg['status'] = Status(msg['status'])
-            obj_msg = Message(**msg)
-            self.memory.append(obj_msg)
+        # elif isinstance(msg, Dict):
+        #     # check for correct dict format?
+        #     msg['rot_type'] = RotType(msg['rot_type'])
+        #     msg['status'] = Status(msg['status'])
+        #     obj_msg = Message(**msg)
+        #     self.memory.append(obj_msg)
 
     def remove(self, idx_to_dlt) -> None:
         del self.memory[idx_to_dlt]
+
+    def convert_memory_to_dict(self):
+        return [msg.to_dict for msg in self.memory]
 

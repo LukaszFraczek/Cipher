@@ -3,12 +3,11 @@ from dataclasses import dataclass
 
 
 @dataclass
-class MenuMessages:
+class MenuMessages: #TODO normal class or enum
     INVALID_INPUT = 'Invalid input!'
     INVALID_SELECTION = "Invalid selection!"
     INPUT_PATH = 'Input file path:\n'
     MSG_ENCODED = 'Message successfully encoded!'
-
 
 
 @dataclass
