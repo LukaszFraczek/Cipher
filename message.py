@@ -1,4 +1,7 @@
+from __future__ import annotations
 from dataclasses import dataclass
+from typing import Dict
+
 
 from constants import RotType, Status
 
@@ -12,12 +15,15 @@ class Message:
     def __repr__(self):
         return f"{self.text}\n{self.rot_type}\n{self.status}"
 
-    def to_dict(self):
+    def to_dict(self) -> Dict:
         _dict = self.__dict__.copy()
         return _dict
 
     @classmethod
-    def create_from_dct(cls, loaded_item: dict):
-        #     msg['rot_type'] = RotType(msg['rot_type'])
-        #     msg['status'] = Status(msg['status'])
-        pass
+    def from_dict(cls, item: Dict) -> Message:
+        return cls(
+            item['text'],
+            RotType(item['rot_type']),
+            Status(item['status'])
+        )
+
