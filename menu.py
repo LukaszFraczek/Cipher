@@ -2,8 +2,7 @@ from typing import Callable
 from dataclasses import dataclass
 
 
-@dataclass
-class MenuMessages: #TODO normal class or enum
+class MenuMsg:
     INVALID_INPUT = 'Invalid input!'
     INVALID_SELECTION = "Invalid selection!"
     INPUT_PATH = 'Input file path:\n'
@@ -37,7 +36,7 @@ class Menu:
                 print(MenuMessages.INVALID_SELECTION)
                 continue
             break
-        return index
+        return index  # ignore warning - impossible to return before assignment
 
     def select(self):
         return self._ITEMS[self._user_input()].function()
@@ -72,7 +71,7 @@ class Dialog:
                 print(MenuMessages.INVALID_SELECTION)
                 continue
             break
-        return index
+        return index  # ignore warning - impossible to return before assignment
 
     def select(self):
         return self._ITEMS[self._user_input()].function()
