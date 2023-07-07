@@ -29,6 +29,6 @@ class MessageBuffer:
     def remove(self, idx_to_dlt) -> None:
         del self.memory[idx_to_dlt]
 
-    def return_dict(self):
+    def to_dict(self):
         return [msg.to_dict for msg in self.memory]
 
