@@ -4,6 +4,7 @@ from copy import copy
 
 from message import Message
 from constants import RotType, Status
+from exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
 class RotEncryption(ABC):
@@ -17,9 +18,9 @@ class RotEncryption(ABC):
     @classmethod
     def encrypt(cls, data: Message) -> Message:
         if data.status == Status.ENCRYPTED:
-            raise Exception  # TODO Raise already encrypted error
+            raise StatusError(Status.ENCRYPTED)
         if data.rot_type != RotType.NONE:
-            raise Exception  # TODO Raise wrong encryption type error
+            raise RotEncryptionError
 
         result = copy(data)
         result.text = cls._translate(data.text)
@@ -30,9 +31,9 @@ class RotEncryption(ABC):
     @classmethod
     def decrypt(cls, data: Message) -> Message:
         if data.status == Status.DECRYPTED:
-            raise Exception  # TODO Raise already decrypted error
+            raise StatusError(Status.DECRYPTED)
         if data.rot_type == RotType.NONE:
-            raise Exception  # TODO Raise wrong encryption type error
+            raise RotDecryptionError
 
         result = copy(data)
         result.text = cls._translate(data.text)

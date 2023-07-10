@@ -6,6 +6,7 @@ from message import Message
 from file_handling import FileHandler
 from encoding import Rot13, Rot47
 from constants import RotType, Status, MsgType
+from exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
 class Manager:
@@ -111,7 +112,7 @@ class Manager:
 
         try:
             self.decode(msg_idx)
-        except Exception:
+        except (StatusError, RotEncryptionError, RotDecryptionError):
             print(MenuMsg.MSG_NOT_ENCODED)
             return
         print(MenuMsg.MSG_DECODED.format(encoding_rot))
@@ -128,7 +129,7 @@ class Manager:
 
         try:
             self.encode(msg_idx, new_rot)
-        except Exception:
+        except (StatusError, RotEncryptionError, RotDecryptionError):
             print(MenuMsg.MSG_IS_ENCODED)
             return
         print(MenuMsg.MSG_ENCODED.format(new_rot))
