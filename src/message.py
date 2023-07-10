@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Dict
 
 
-from constants import RotType, Status
+from src.constants import RotType, Status
 
 
 @dataclass
