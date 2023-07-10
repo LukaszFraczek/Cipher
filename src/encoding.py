@@ -2,9 +2,9 @@ from abc import abstractmethod, ABC
 import string
 from copy import copy
 
-from message import Message
-from constants import RotType, Status
-from exceptions import StatusError, RotEncryptionError, RotDecryptionError
+from src.message import Message
+from src.constants import RotType, Status
+from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
 class RotEncryption(ABC):

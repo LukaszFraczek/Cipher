@@ -1,12 +1,12 @@
 from typing import Dict, Callable
 
-from buffer import MessageBuffer
-from menu import Menu, MenuItem, Dialog, DialogItem, MenuMsg
-from message import Message
-from file_handling import FileHandler
-from encoding import Rot13, Rot47
-from constants import RotType, Status, MsgType
-from exceptions import StatusError, RotEncryptionError, RotDecryptionError
+from src.buffer import MessageBuffer
+from src.menu import Menu, MenuItem, Dialog, DialogItem, MenuMsg
+from src.message import Message
+from src.file_handling import FileHandler
+from src.encoding import Rot13, Rot47
+from src.constants import RotType, Status, MsgType
+from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
 class Manager:

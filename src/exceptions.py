@@ -1,4 +1,4 @@
-from constants import Status, RotType
+from src.constants import Status
 
 
 class StatusError(Exception):
