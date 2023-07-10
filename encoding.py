@@ -17,9 +17,9 @@ class RotEncryption(ABC):
     @classmethod
     def encrypt(cls, data: Message) -> Message:
         if data.status == Status.ENCRYPTED:
-            pass  # Raise encrypted error
-        # if data.rot_type != RotType.NONE:
-        #   pass  # Raise wrong encryption type error
+            raise Exception  # TODO Raise already encrypted error
+        if data.rot_type != RotType.NONE:
+            raise Exception  # TODO Raise wrong encryption type error
 
         result = copy(data)
         result.text = cls._translate(data.text)
@@ -30,9 +30,9 @@ class RotEncryption(ABC):
     @classmethod
     def decrypt(cls, data: Message) -> Message:
         if data.status == Status.DECRYPTED:
-            pass  # Raise encrypted error
-        # if data.rot_type != RotType.NONE:
-        #   pass  # Raise wrong encryption type error
+            raise Exception  # TODO Raise already decrypted error
+        if data.rot_type == RotType.NONE:
+            raise Exception  # TODO Raise wrong encryption type error
 
         result = copy(data)
         result.text = cls._translate(data.text)
