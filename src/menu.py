@@ -2,13 +2,21 @@ from typing import Callable
 from dataclasses import dataclass
 
 
-@dataclass
-class MenuMessages:
+class MenuMsg:
     INVALID_INPUT = 'Invalid input!'
     INVALID_SELECTION = "Invalid selection!"
-    INPUT_PATH = 'Input file path:\n'
-    MSG_ENCODED = 'Message successfully encoded!'
 
+    INPUT_PATH = 'Input file path:\n'
+    INPUT_MSG_NUM = 'Input message number [1-{}] to {}:\n'
+    INPUT_NEW_MSG = 'Input new message:\n'
+
+    MSG_ADDED = 'Message successfully added!'
+    MSG_DECODED = 'Message successfully decoded from {}!'
+    MSG_ENCODED = 'Message successfully encoded to {}!'
+    MSG_DELETED = 'Message successfully deleted!'
+
+    MSG_NOT_ENCODED = "Message not encoded!"
+    MSG_IS_ENCODED = "Message already encoded!"
 
 
 @dataclass
@@ -35,10 +43,10 @@ class Menu:
             try:
                 index = self._ALLOWED_INPUTS.index(user_input)
             except ValueError:
-                print(MenuMessages.INVALID_SELECTION)
+                print(MenuMsg.INVALID_SELECTION)
                 continue
             break
-        return index
+        return index  # ignore warning - impossible to return before assignment
 
     def select(self):
         return self._ITEMS[self._user_input()].function()
@@ -70,10 +78,10 @@ class Dialog:
             try:
                 index = self._ALLOWED_INPUTS.index(user_input)
             except ValueError:
-                print(MenuMessages.INVALID_SELECTION)
+                print(MenuMsg.INVALID_SELECTION)
                 continue
             break
-        return index
+        return index  # ignore warning - impossible to return before assignment
 
     def select(self):
         return self._ITEMS[self._user_input()].function()

@@ -1,22 +1,25 @@
+from abc import abstractmethod, ABC
+import string
 from copy import copy
 
 from message import Message
 from constants import RotType, Status
 
 
-class RotEncryption:
+class RotEncryption(ABC):
     _ROT_TYPE: RotType = RotType.NONE
 
     @classmethod
+    @abstractmethod
     def _translate(cls, text: str) -> str:
-        return text
+        raise NotImplementedError
 
     @classmethod
     def encrypt(cls, data: Message) -> Message:
         if data.status == Status.ENCRYPTED:
-            pass  # Raise encrypted error
-        # if data.rot_type != RotType.NONE:
-        #   pass  # Raise wrong encryption type error
+            raise Exception  # TODO Raise already encrypted error
+        if data.rot_type != RotType.NONE:
+            raise Exception  # TODO Raise wrong encryption type error
 
         result = copy(data)
         result.text = cls._translate(data.text)
@@ -27,9 +30,9 @@ class RotEncryption:
     @classmethod
     def decrypt(cls, data: Message) -> Message:
         if data.status == Status.DECRYPTED:
-            pass  # Raise encrypted error
-        # if data.rot_type != RotType.NONE:
-        #   pass  # Raise wrong encryption type error
+            raise Exception  # TODO Raise already decrypted error
+        if data.rot_type == RotType.NONE:
+            raise Exception  # TODO Raise wrong encryption type error
 
         result = copy(data)
         result.text = cls._translate(data.text)
@@ -39,7 +42,7 @@ class RotEncryption:
 
 
 class Rot13(RotEncryption):
-    _LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    _LETTERS = string.ascii_letters
     _LETTERS_ROT13 = "nopqrstuvwxyzabcdefghijklmNOPQRSTUVWXYZABCDEFGHIJKLM"
     _ROT_TYPE = RotType.ROT13
 

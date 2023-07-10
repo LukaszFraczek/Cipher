@@ -1,4 +1,4 @@
-from program_manager import Manager
+from src.program_manager import Manager
 
 
 def main():
