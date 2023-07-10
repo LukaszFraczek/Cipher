@@ -2,9 +2,6 @@ import json
 from os import path
 from typing import List, Dict
 
-from message import Message
-from buffer import MessageBuffer
-
 
 class FileHandler:
     @staticmethod
@@ -26,10 +23,3 @@ class FileHandler:
             msg_list = json.load(file)
 
         return msg_list
-
-
-        # buffer = MessageBuffer()
-        # for msg in msg_list:
-        #     buffer.add(msg)
-        #
-        # return buffer

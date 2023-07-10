@@ -67,8 +67,7 @@ class Manager:
             print(MenuMsg.INVALID_INPUT)
             return
 
-        # need file path check later
-        file_path = input(MenuMsg.INPUT_PATH)
+        file_path = input(MenuMsg.INPUT_PATH)  # TODO file path check
         FileHandler.save_to_json([self.buffer[msg_idx].to_dict()], file_path)
 
     # def translation(self, msg_idx: int, msg_rot: RotType, action: Action) -> None:
