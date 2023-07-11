@@ -4,19 +4,25 @@ from dataclasses import dataclass
 
 class MenuMsg:
     INVALID_INPUT = 'Invalid input!'
-    INVALID_SELECTION = "Invalid selection!"
+    INVALID_SELECTION = 'Invalid selection!'
+
+    INVALID_PATH = 'Invalid path!'
+    FILE_NOT_FOUND = 'File not found!'
 
     INPUT_PATH = 'Input file path:\n'
     INPUT_MSG_NUM = 'Input message number [1-{}] to {}:\n'
     INPUT_NEW_MSG = 'Input new message:\n'
 
     MSG_ADDED = 'Message successfully added!'
-    MSG_DECODED = 'Message successfully decoded from {}!'
-    MSG_ENCODED = 'Message successfully encoded to {}!'
     MSG_DELETED = 'Message successfully deleted!'
 
-    MSG_NOT_ENCODED = "Message not encoded!"
-    MSG_IS_ENCODED = "Message already encoded!"
+    MSG_DECODED = 'Message successfully decoded from {}!'
+    MSG_ENCODED = 'Message successfully encoded to {}!'
+
+    MSG_NOT_ENCODED = 'Message not encoded!'
+    MSG_IS_ENCODED = 'Message already encoded!'
+
+    BUFFER_EMPTY = 'No messages to save!'
 
 
 @dataclass

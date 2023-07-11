@@ -1,11 +1,12 @@
 from typing import Dict, Callable
 
-from buffer import MessageBuffer
-from menu import Menu, MenuItem, Dialog, DialogItem, MenuMsg
-from message import Message
-from file_handling import FileHandler
-from encoding import Rot13, Rot47
-from constants import RotType, Status, MsgType
+from src.buffer import MessageBuffer
+from src.menu import Menu, MenuItem, Dialog, DialogItem, MenuMsg
+from src.message import Message
+from src.file_handling import FileHandler
+from src.encoding import Rot13, Rot47
+from src.constants import RotType, Status, MsgType
+from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
 class Manager:
@@ -42,7 +43,11 @@ class Manager:
 
     def menu_read_from_file(self) -> None:
         file_path = input(MenuMsg.INPUT_PATH)
-        msg_list = FileHandler.read_from_json(file_path)
+        try:
+            msg_list = FileHandler.read_from_json(file_path)
+        except FileNotFoundError:
+            print(MenuMsg.FILE_NOT_FOUND)
+            return
 
         for msg in msg_list:
             self.buffer.add(Message.from_dict(msg))
@@ -55,20 +60,37 @@ class Manager:
         return msg_idx
 
     def menu_save_to_file(self) -> None:
+        if not len(self.buffer):
+            print(MenuMsg.BUFFER_EMPTY)
+            return
+
         self.save_dialog.display()
+
         if self.save_dialog.select():  # if true save all messages, else save one
-            file_path = input(MenuMsg.INPUT_PATH)
-            FileHandler.save_to_json(self.buffer.to_dict(), file_path)
-            return
+            self.save()
+        else:
+            self.save(mode='one')
 
+    def save(self, *, mode: str = 'all') -> None:
+        if mode == 'one':
+            try:
+                msg_idx = self.get_msg_idx(MsgType.SAVE)
+            except (ValueError, IndexError):
+                print(MenuMsg.INVALID_INPUT)
+                return
+            payload = [self.buffer[msg_idx].to_dict()]
+
+        elif mode == 'all':
+            payload = self.buffer.to_dict()
+
+        else:
+            raise Exception('Invalid save mode')
+
+        file_path = input(MenuMsg.INPUT_PATH)
         try:
-            msg_idx = self.get_msg_idx(MsgType.SAVE)
-        except (ValueError, IndexError):
-            print(MenuMsg.INVALID_INPUT)
-            return
-
-        file_path = input(MenuMsg.INPUT_PATH)  # TODO file path check
-        FileHandler.save_to_json([self.buffer[msg_idx].to_dict()], file_path)
+            FileHandler.save_to_json(payload, file_path)
+        except FileNotFoundError:
+            print(MenuMsg.INVALID_PATH)
 
     # def translation(self, msg_idx: int, msg_rot: RotType, action: Action) -> None:
     #     if msg_rot == RotType.NONE:
@@ -111,7 +133,7 @@ class Manager:
 
         try:
             self.decode(msg_idx)
-        except Exception:
+        except (StatusError, RotEncryptionError, RotDecryptionError):
             print(MenuMsg.MSG_NOT_ENCODED)
             return
         print(MenuMsg.MSG_DECODED.format(encoding_rot))
@@ -128,7 +150,7 @@ class Manager:
 
         try:
             self.encode(msg_idx, new_rot)
-        except Exception:
+        except (StatusError, RotEncryptionError, RotDecryptionError):
             print(MenuMsg.MSG_IS_ENCODED)
             return
         print(MenuMsg.MSG_ENCODED.format(new_rot))
