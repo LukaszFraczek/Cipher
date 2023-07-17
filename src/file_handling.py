@@ -2,6 +2,8 @@ import json
 from os import path
 from typing import List, Dict
 
+from menu import MenuMsg
+
 
 class FileHandler:
     @staticmethod
@@ -19,7 +21,11 @@ class FileHandler:
     @staticmethod
     def read_from_json(filepath: str) -> List[Dict]:
         msg_list = []
-        with open(filepath) as file:
-            msg_list = json.load(file)
-
+        try:
+            msg_list = FileHandler._load_msgs_from_file(file_path=filepath)
+        except FileNotFoundError as e:
+            print(MenuMsg.FILE_NOT_FOUND)
         return msg_list
+
+
+
