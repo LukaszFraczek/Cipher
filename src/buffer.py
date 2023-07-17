@@ -7,7 +7,7 @@ class MessageBuffer:
     def __init__(self, *messages: Message):
         self.memory: List[Message] = [*messages]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.memory)
 
     def __iter__(self):
