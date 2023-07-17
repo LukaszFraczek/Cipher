@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Any
 from dataclasses import dataclass
 
 
@@ -66,9 +66,9 @@ class DialogItem:
 
 class Dialog:
     def __init__(self, message: str, *items: DialogItem):
-        self._ALLOWED_INPUTS = tuple([item.option for item in items])
-        self._ITEMS = tuple([item for item in items])
         self._MESSAGE = message
+        self._ITEMS = tuple([item for item in items])
+        self._ALLOWED_INPUTS = tuple([item.option for item in items])
 
     def display(self) -> None:
         print(f'{self._MESSAGE} [', end='')
@@ -78,17 +78,20 @@ class Dialog:
                 continue
             print(f'{item}]')
 
+    def _validate_user_input(self, user_input: str) -> int:
+        try:
+            index = self._ALLOWED_INPUTS.index(user_input)
+            return index
+        except ValueError:
+            print(MenuMsg.INVALID_SELECTION)
+
     def _user_input(self) -> int:
         while True:
             user_input = input()
-            try:
-                index = self._ALLOWED_INPUTS.index(user_input)
-            except ValueError:
-                print(MenuMsg.INVALID_SELECTION)
-                continue
-            break
-        return index  # ignore warning - impossible to return before assignment
+            index = self._validate_user_input(user_input)
+            if index:
+                return index
 
-    def select(self):
+    def select(self) -> Any:
         return self._ITEMS[self._user_input()].function()
 
