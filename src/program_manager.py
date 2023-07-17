@@ -9,10 +9,16 @@ from src.constants import RotType, Status, MsgType
 from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
+class MenuHandler:
+    def __init__(self, buffer):
+        self.buffer = buffer
+
+
 class Manager:
     def __init__(self):
         self.__running = True
         self.buffer = MessageBuffer()
+        self.menu = MenuHandler(self.buffer)
 
         # create a main menu
         self.main_menu = Menu(
