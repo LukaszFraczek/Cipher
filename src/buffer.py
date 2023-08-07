@@ -21,7 +21,7 @@ class MessageBuffer:
 
     def display_all(self):
         for idx, msg in enumerate(self.memory, 1):
-            print(f'{idx}. Status: {msg.status}, Encryption: {msg.rot_type}')
+            print(f'{idx}. Status: {msg.status.value}, Encryption: {msg.rot_type.value}')
             print(msg.text)
 
     def add(self, msg: Message) -> None:
