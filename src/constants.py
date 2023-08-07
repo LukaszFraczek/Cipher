@@ -17,9 +17,3 @@ class MsgType(str, Enum):
     DECODE = 'decode'
     SAVE = 'save'
     DELETE = 'delete'
-
-
-# class Action(Enum):
-#     DECRYPTION = 0
-#     ENCRYPTION = 1
-
