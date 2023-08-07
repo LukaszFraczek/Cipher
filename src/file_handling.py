@@ -2,7 +2,7 @@ import json
 from os import path
 from typing import List, Dict
 
-from menu import MenuMsg
+from src.menu import MenuMsg
 
 
 class FileHandler:
