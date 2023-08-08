@@ -31,6 +31,10 @@ class MessageBuffer:
     def remove(self, idx_to_dlt) -> None:
         del self.memory[idx_to_dlt]
 
+    def check_idx(self, idx_to_check) -> None:
+        if idx_to_check < 0 or idx_to_check >= len(self.memory):
+            raise ValueError('Msg number out of bounds!')
+
     def to_dict(self) -> List[Dict]:
         return [msg.to_dict() for msg in self.memory]
 
