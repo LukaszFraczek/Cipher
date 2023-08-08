@@ -60,7 +60,7 @@ class Interface(ABC):
         while True:
             user_input = input()
             index = self._validate_user_input(user_input)
-            if index:
+            if index is not None:
                 return index
 
     def select(self) -> Any:
