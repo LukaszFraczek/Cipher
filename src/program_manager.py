@@ -120,7 +120,10 @@ class MenuHandler:
         if not len(self.buffer):
             print(MenuMsg.BUFFER_EMPTY.format(MsgType.DISPLAY))
             return
-        self.manager.show_all_messages()
+
+        for idx, msg in enumerate(self.buffer, 1):
+            print(f'{idx}. Status: {msg.status.value}, Encryption: {msg.rot_type.value}')
+            print(msg.text)
 
 
 class Manager:
@@ -178,9 +181,6 @@ class Manager:
 
     def new_message(self, new_msg: str) -> None:
         self.buffer.add(Message(new_msg, RotType.NONE, Status.DECRYPTED))
-
-    def show_all_messages(self) -> None:
-        self.buffer.display_all()
 
     def stop(self):
         self.__running = False
