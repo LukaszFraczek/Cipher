@@ -26,15 +26,15 @@ class FileHandler:
         try:
             merged_msgs = existing_msgs + new_msgs
             FileHandler._save_msgs_to_file(file_path, merged_msgs)
-        except FileNotFoundError as err:
+        except FileNotFoundError:
             print(MenuMsg.INVALID_PATH)
 
     @staticmethod
     def read_from_json(file_path: str) -> List[Dict]:
         msg_list = []
         try:
-            msg_list = FileHandler._load_msgs_from_file(file_path=file_path)
-        except FileNotFoundError as err:
+            msg_list = FileHandler._load_msgs_from_file(file_path)
+        except FileNotFoundError:
             print(MenuMsg.FILE_NOT_FOUND)
         return msg_list
 
