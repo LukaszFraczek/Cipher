@@ -10,7 +10,7 @@ class TestTranslationMethods:
     @pytest.mark.parametrize('given, expected', [
         (
             'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-            "nopqrstuvwxyzabcdefghijklmNOPQRSTUVWXYZABCDEFGHIJKLM"
+            'nopqrstuvwxyzabcdefghijklmNOPQRSTUVWXYZABCDEFGHIJKLM'
         ),
         (
             'ala ma kota oraz MA TEGO KOTA ALA',

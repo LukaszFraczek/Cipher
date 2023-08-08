@@ -1,9 +1,7 @@
 import json
-import os
 import pytest
 
 from src.file_handling import FileHandler
-from src.menu import MenuMsg
 
 
 class FileHandlingFixtures:
