@@ -32,7 +32,7 @@ class RotEncryption(ABC):
     def decrypt(cls, data: Message) -> Message:
         if data.status == Status.DECRYPTED:
             raise StatusError(Status.DECRYPTED)
-        if data.rot_type == RotType.NONE:
+        if data.rot_type != cls._ROT_TYPE:
             raise RotDecryptionError
 
         result = copy(data)
