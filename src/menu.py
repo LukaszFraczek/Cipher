@@ -23,7 +23,7 @@ class MenuMsg:
     MSG_NOT_ENCODED = 'Message not encoded!'
     MSG_IS_ENCODED = 'Message already encoded!'
 
-    BUFFER_EMPTY = 'No messages to save!'
+    BUFFER_EMPTY = 'No messages to {}!'
 
 
 @dataclass
@@ -47,7 +47,7 @@ class Interface(ABC):
 
     @abstractmethod
     def display(self) -> None:
-        print('PLACEHOLDER')
+        raise NotImplementedError
 
     def _validate_user_input(self, user_input: str) -> int:
         try:
