@@ -2,24 +2,41 @@ import json
 from os import path
 from typing import List, Dict
 
+from src.menu import MenuMsg
+
 
 class FileHandler:
     @staticmethod
-    def save_to_json(msg_buffer: List[Dict], filepath: str) -> None:
+    def _load_msgs_from_file(file_path: str) -> List[Dict]:
         msg_list = []
-        if path.isfile(filepath):  # File found -> first read from existing file
-            with open(filepath) as file:
-                msg_list = json.load(file)
+        with open(file_path) as file:
+            msg_list = json.load(file)
+        return msg_list
 
-        msg_list.extend(msg_buffer)
-
-        with open(filepath, 'w') as file:
+    @staticmethod
+    def _save_msgs_to_file(file_path: str, msg_list: List[Dict]) -> None:
+        with open(file_path, 'w') as file:
             json.dump(msg_list, file, indent=4)
 
     @staticmethod
-    def read_from_json(filepath: str) -> List[Dict]:
-        msg_list = []
-        with open(filepath) as file:
-            msg_list = json.load(file)
+    def save_to_json(new_msgs: List[Dict], file_path: str) -> None:
+        existing_msgs = []
+        if path.isfile(file_path):
+            existing_msgs = FileHandler._load_msgs_from_file(file_path)
+        try:
+            merged_msgs = existing_msgs + new_msgs
+            FileHandler._save_msgs_to_file(file_path, merged_msgs)
+        except FileNotFoundError as err:
+            print(MenuMsg.INVALID_PATH)
 
+    @staticmethod
+    def read_from_json(file_path: str) -> List[Dict]:
+        msg_list = []
+        try:
+            msg_list = FileHandler._load_msgs_from_file(file_path=file_path)
+        except FileNotFoundError as err:
+            print(MenuMsg.FILE_NOT_FOUND)
         return msg_list
+
+
+

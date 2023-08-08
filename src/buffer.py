@@ -7,7 +7,7 @@ class MessageBuffer:
     def __init__(self, *messages: Message):
         self.memory: List[Message] = [*messages]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.memory)
 
     def __iter__(self):
@@ -21,7 +21,7 @@ class MessageBuffer:
 
     def display_all(self):
         for idx, msg in enumerate(self.memory, 1):
-            print(f'{idx}. Status: {msg.status}, Encryption: {msg.rot_type}')
+            print(f'{idx}. Status: {msg.status.value}, Encryption: {msg.rot_type.value}')
             print(msg.text)
 
     def add(self, msg: Message) -> None:
@@ -30,6 +30,10 @@ class MessageBuffer:
 
     def remove(self, idx_to_dlt) -> None:
         del self.memory[idx_to_dlt]
+
+    def check_idx(self, idx_to_check) -> None:
+        if idx_to_check < 0 or idx_to_check >= len(self.memory):
+            raise ValueError('Msg number out of bounds!')
 
     def to_dict(self) -> List[Dict]:
         return [msg.to_dict() for msg in self.memory]

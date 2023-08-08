@@ -1,4 +1,5 @@
-from typing import Callable
+from typing import Callable, Any
+from abc import abstractmethod, ABC
 from dataclasses import dataclass
 
 
@@ -22,7 +23,7 @@ class MenuMsg:
     MSG_NOT_ENCODED = 'Message not encoded!'
     MSG_IS_ENCODED = 'Message already encoded!'
 
-    BUFFER_EMPTY = 'No messages to save!'
+    BUFFER_EMPTY = 'No messages to {}!'
 
 
 @dataclass
@@ -32,63 +33,58 @@ class MenuItem:
     function: Callable
 
 
-class Menu:
-    def __init__(self, title: str, *items: MenuItem):
-        self._ALLOWED_INPUTS = tuple([item.option for item in items])
-        self._ITEMS = tuple([item for item in items])
-        self._TITLE = title
-
-    def display(self) -> None:
-        print(self._TITLE)
-        for item in self._ITEMS:
-            print(f'{item.option}. {item.description}')
-
-    def _user_input(self) -> int:
-        while True:
-            user_input = input()
-            try:
-                index = self._ALLOWED_INPUTS.index(user_input)
-            except ValueError:
-                print(MenuMsg.INVALID_SELECTION)
-                continue
-            break
-        return index  # ignore warning - impossible to return before assignment
-
-    def select(self):
-        return self._ITEMS[self._user_input()].function()
-
-
 @dataclass
 class DialogItem:
     option: str
     function: Callable
 
 
-class Dialog:
-    def __init__(self, message: str, *items: DialogItem):
+class Interface(ABC):
+    def __init__(self, title: str, *items):
         self._ALLOWED_INPUTS = tuple([item.option for item in items])
         self._ITEMS = tuple([item for item in items])
-        self._MESSAGE = message
+        self._TITLE = title
+
+    @abstractmethod
+    def display(self) -> None:
+        raise NotImplementedError
+
+    def _validate_user_input(self, user_input: str) -> int:
+        try:
+            index = self._ALLOWED_INPUTS.index(user_input)
+            return index
+        except ValueError:
+            print(MenuMsg.INVALID_SELECTION)
+
+    def _user_input(self) -> int:
+        while True:
+            user_input = input()
+            index = self._validate_user_input(user_input)
+            if index is not None:
+                return index
+
+    def select(self) -> Any:
+        return self._ITEMS[self._user_input()].function()
+
+
+class Menu(Interface):
+    def __init__(self, title: str, *items: MenuItem):
+        super().__init__(title, *items)
 
     def display(self) -> None:
-        print(f'{self._MESSAGE} [', end='')
+        print(self._TITLE)
+        for item in self._ITEMS:
+            print(f'{item.option}. {item.description}')
+
+
+class Dialog(Interface):
+    def __init__(self, message: str, *items: DialogItem):
+        super().__init__(message, *items)
+
+    def display(self) -> None:
+        print(f'{self._TITLE} [', end='')
         for item in self._ALLOWED_INPUTS:
             if item != self._ALLOWED_INPUTS[-1]:
                 print(f'{item}/', end='')
                 continue
             print(f'{item}]')
-
-    def _user_input(self) -> int:
-        while True:
-            user_input = input()
-            try:
-                index = self._ALLOWED_INPUTS.index(user_input)
-            except ValueError:
-                print(MenuMsg.INVALID_SELECTION)
-                continue
-            break
-        return index  # ignore warning - impossible to return before assignment
-
-    def select(self):
-        return self._ITEMS[self._user_input()].function()
-

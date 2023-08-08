@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
-import string
 from copy import copy
+import string
 
 from src.message import Message
 from src.constants import RotType, Status
@@ -68,3 +68,5 @@ class Rot47(RotEncryption):
                 letter_ucp -= 47
             output += chr(letter_ucp)
         return output
+
+

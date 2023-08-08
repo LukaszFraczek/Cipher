@@ -1,4 +1,4 @@
-from typing import Dict, Callable
+from typing import Dict, Callable, Any
 
 from src.buffer import MessageBuffer
 from src.menu import Menu, MenuItem, Dialog, DialogItem, MenuMsg
@@ -9,10 +9,10 @@ from src.constants import RotType, Status, MsgType
 from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
-class Manager:
-    def __init__(self):
-        self.__running = True
-        self.buffer = MessageBuffer()
+class MenuHandler:
+    def __init__(self, manager, buffer):
+        self.buffer = buffer
+        self.manager = manager
 
         # create a main menu
         self.main_menu = Menu(
@@ -23,12 +23,12 @@ class Manager:
             MenuItem('4', 'Delete message', self.menu_delete_message),
             MenuItem('5', 'Decode message', self.menu_decode_message),
             MenuItem('6', 'Encode message', self.menu_encode_message),
-            MenuItem('7', 'Show messages', self.menu_show_messages),
-            MenuItem('9', 'Exit', self.menu_stop)
+            MenuItem('7', 'Show messages', self.menu_show_all_messages),
+            MenuItem('9', 'Exit', self.manager.stop)
         )
 
         # create an encoding option menu
-        self.encode_message_menu = Menu(
+        self.encode_menu = Menu(
             'Select encoding method:',
             MenuItem('1', 'Rot13', lambda: RotType.ROT13),
             MenuItem('2', 'Rot47', lambda: RotType.ROT47),
@@ -41,141 +41,151 @@ class Manager:
             DialogItem('N', lambda: False),
         )
 
+    def get_menu_choice(self, menu: Menu) -> Any:
+        menu.display()
+        return menu.select()
+
+    def get_dialog_choice(self, dialog: Dialog) -> Any:
+        dialog.display()
+        return dialog.select()
+
+    def get_file_path(self):
+        return input(MenuMsg.INPUT_PATH)
+
+    def get_msg_idx(self, action: MsgType) -> int | None:
+        try:
+            input_msg_num = MenuMsg.INPUT_MSG_NUM.format(len(self.buffer), action)
+            msg_idx = int(input(input_msg_num)) - 1
+            self.buffer.check_idx(msg_idx)
+        except (ValueError, IndexError):
+            print(MenuMsg.INVALID_INPUT)
+            return None
+        return msg_idx
+
     def menu_read_from_file(self) -> None:
         file_path = input(MenuMsg.INPUT_PATH)
-        try:
-            msg_list = FileHandler.read_from_json(file_path)
-        except FileNotFoundError:
-            print(MenuMsg.FILE_NOT_FOUND)
-            return
-
-        for msg in msg_list:
-            self.buffer.add(Message.from_dict(msg))
-
-    def get_msg_idx(self, action: MsgType) -> int:
-        input_msg = MenuMsg.INPUT_MSG_NUM.format(len(self.buffer), action)
-        msg_idx = int(input(input_msg)) - 1
-        if msg_idx < 0 or msg_idx >= len(self.buffer):
-            raise ValueError('Msg number out of bounds')
-        return msg_idx
+        self.manager.read_from_file(file_path)
 
     def menu_save_to_file(self) -> None:
         if not len(self.buffer):
-            print(MenuMsg.BUFFER_EMPTY)
+            print(MenuMsg.BUFFER_EMPTY.format(MsgType.SAVE))
             return
 
-        self.save_dialog.display()
+        choice = self.get_dialog_choice(self.save_dialog)
 
-        if self.save_dialog.select():  # if true save all messages, else save one
-            self.save()
+        if choice:
+            self.manager.save_to_file()
         else:
-            self.save(mode='one')
-
-    def save(self, *, mode: str = 'all') -> None:
-        if mode == 'one':
-            try:
-                msg_idx = self.get_msg_idx(MsgType.SAVE)
-            except (ValueError, IndexError):
-                print(MenuMsg.INVALID_INPUT)
+            msg_idx = self.get_msg_idx(MsgType.SAVE)
+            if msg_idx is None:
                 return
-            payload = [self.buffer[msg_idx].to_dict()]
-
-        elif mode == 'all':
-            payload = self.buffer.to_dict()
-
-        else:
-            raise Exception('Invalid save mode')
-
-        file_path = input(MenuMsg.INPUT_PATH)
-        try:
-            FileHandler.save_to_json(payload, file_path)
-        except FileNotFoundError:
-            print(MenuMsg.INVALID_PATH)
-
-    # def translation(self, msg_idx: int, msg_rot: RotType, action: Action) -> None:
-    #     if msg_rot == RotType.NONE:
-    #         raise Exception
-    #
-    #     translation_method = {
-    #         RotType.ROT13: (Rot13.decrypt, Rot13.encrypt),
-    #         RotType.ROT47: (Rot47.decrypt, Rot47.encrypt)
-    #     }
-    #
-    #     method = translation_method[msg_rot][action.value]
-    #     self.buffer[msg_idx] = method(self.buffer[msg_idx])
-    #     # return translation_method[msg_rot][action.value]
-
-    def encode(self, msg_idx: int, new_rot: RotType) -> None:
-        encoding_method: Dict[RotType, Callable] = {
-            RotType.ROT13: Rot13.encrypt,
-            RotType.ROT47: Rot47.encrypt
-        }
-        selected_method = encoding_method[new_rot]
-        self.buffer[msg_idx] = selected_method(self.buffer[msg_idx])
-
-    def decode(self, msg_idx: int) -> None:
-        decoding_method: Dict[RotType, Callable] = {
-            RotType.ROT13: Rot13.decrypt,
-            RotType.ROT47: Rot47.decrypt
-        }
-        rot_to_decode = self.buffer[msg_idx].rot_type
-        selected_method = decoding_method[rot_to_decode]
-        self.buffer[msg_idx] = selected_method(self.buffer[msg_idx])
+            self.manager.save_to_file(msg_idx)
 
     def menu_decode_message(self) -> None:
-        try:
-            msg_idx = self.get_msg_idx(MsgType.DECODE)
-        except (ValueError, IndexError):
-            print(MenuMsg.INVALID_INPUT)
+        msg_idx = self.get_msg_idx(MsgType.DECODE)
+        if msg_idx is None:
             return
-
-        encoding_rot = self.buffer[msg_idx].rot_type
-
-        try:
-            self.decode(msg_idx)
-        except (StatusError, RotEncryptionError, RotDecryptionError):
+        rot = self.manager.decode_message(msg_idx)
+        if not rot:
             print(MenuMsg.MSG_NOT_ENCODED)
             return
-        print(MenuMsg.MSG_DECODED.format(encoding_rot))
+        print(MenuMsg.MSG_DECODED.format(rot))
 
     def menu_encode_message(self) -> None:
-        try:
-            msg_idx = self.get_msg_idx(MsgType.ENCODE)
-        except (ValueError, IndexError):
-            print(MenuMsg.INVALID_INPUT)
+        msg_idx = self.get_msg_idx(MsgType.ENCODE)
+        if msg_idx is None:
             return
 
-        self.encode_message_menu.display()
-        new_rot = self.encode_message_menu.select()
+        new_rot = self.get_menu_choice(self.encode_menu)
 
-        try:
-            self.encode(msg_idx, new_rot)
-        except (StatusError, RotEncryptionError, RotDecryptionError):
+        success = self.manager.encode_message(msg_idx, new_rot)
+        if not success:
             print(MenuMsg.MSG_IS_ENCODED)
             return
         print(MenuMsg.MSG_ENCODED.format(new_rot))
 
     def menu_delete_message(self) -> None:
-        try:
-            msg_idx = self.get_msg_idx(MsgType.DELETE)
-        except (ValueError, IndexError):
-            print(MenuMsg.INVALID_INPUT)
+        msg_idx = self.get_msg_idx(MsgType.DELETE)
+        if msg_idx is None:
             return
-        self.buffer.remove(msg_idx)
+        self.manager.delete_message(msg_idx)
         print(MenuMsg.MSG_DELETED)
 
     def menu_new_message(self) -> None:
         new_msg = input(MenuMsg.INPUT_NEW_MSG)
-        self.buffer.add(Message(new_msg, RotType.NONE, Status.DECRYPTED))
+        self.manager.new_message(new_msg)
         print(MenuMsg.MSG_ADDED)
 
-    def menu_show_messages(self) -> None:
+    def menu_show_all_messages(self) -> None:
+        if not len(self.buffer):
+            print(MenuMsg.BUFFER_EMPTY.format(MsgType.DISPLAY))
+            return
+        self.manager.show_all_messages()
+
+
+class Manager:
+    def __init__(self):
+        self.__running = True
+        self.buffer = MessageBuffer()
+        self.menu = MenuHandler(self, self.buffer)
+
+    def read_from_file(self, file_path) -> None:
+        msg_list = FileHandler.read_from_json(file_path)
+        for msg in msg_list:
+            self.buffer.add(Message.from_dict(msg))
+
+    def get_payload_to_save(self, idx: int = None) -> list | None:
+        if not idx:
+            return self.buffer.to_dict()
+        return [self.buffer[idx].to_dict()]
+
+    def save_to_file(self, idx) -> None:
+        payload = self.get_payload_to_save(idx)
+        file_path = self.menu.get_file_path()
+        FileHandler.save_to_json(payload, file_path)
+
+    def decode_message(self, msg_idx) -> RotType | None:
+        decoding_method: Dict[RotType, Callable] = {
+            RotType.ROT13: Rot13.decrypt,
+            RotType.ROT47: Rot47.decrypt
+        }
+
+        rot_to_decode = self.buffer[msg_idx].rot_type
+        method = decoding_method[rot_to_decode]
+
+        try:
+            self.buffer[msg_idx] = method(self.buffer[msg_idx])
+        except (StatusError, RotEncryptionError, RotDecryptionError):
+            return None
+        return rot_to_decode
+
+    def encode_message(self, msg_idx, new_rot) -> bool:
+        encoding_method: Dict[RotType, Callable] = {
+            RotType.ROT13: Rot13.encrypt,
+            RotType.ROT47: Rot47.encrypt
+        }
+
+        method = encoding_method[new_rot]
+
+        try:
+            self.buffer[msg_idx] = method(self.buffer[msg_idx])
+        except (StatusError, RotEncryptionError, RotDecryptionError):
+            return False
+        return True
+
+    def delete_message(self, msg_idx) -> None:
+        self.buffer.remove(msg_idx)
+
+    def new_message(self, new_msg: str) -> None:
+        self.buffer.add(Message(new_msg, RotType.NONE, Status.DECRYPTED))
+
+    def show_all_messages(self) -> None:
         self.buffer.display_all()
 
-    def menu_stop(self):
+    def stop(self):
         self.__running = False
 
     def run(self):
         while self.__running:
-            self.main_menu.display()
-            self.main_menu.select()
+            self.menu.main_menu.display()
+            self.menu.main_menu.select()
