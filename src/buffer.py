@@ -28,14 +28,14 @@ class MessageBuffer:
 
     def check_idx(self, idx_to_check) -> None:
         if idx_to_check < 0 or idx_to_check >= len(self.memory):
-            raise IndexError('Msg number out of bounds!')
+            raise IndexError("Msg number out of bounds!")
 
     def to_dict(self) -> List[Dict]:
         return [msg.to_dict() for msg in self.memory]
 
 
 class MessageBufferIter:
-    def __init__(self, buffer_class: MessageBuffer):
+    def __init__(self, buffer_class: MessageBuffer) -> None:
         self._index = 0
         self._size = len(buffer_class.memory)
         self._memory = buffer_class.memory
