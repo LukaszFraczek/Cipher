@@ -8,30 +8,22 @@ class FileHandlingFixtures:
     @pytest.fixture()
     def messages(self):
         messages = [
-            {
-                'text': 'aaa',
-                'rot_type': 'NONE',
-                'status': 'DECRYPTED'
-            },
-            {
-                'text': 'bbb',
-                'rot_type': 'ROT47',
-                'status': 'ENCRYPTED'
-            }
+            {"text": "aaa", "rot_type": "NONE", "status": "DECRYPTED"},
+            {"text": "bbb", "rot_type": "ROT47", "status": "ENCRYPTED"},
         ]
         return messages
 
     @pytest.fixture
     def mock_existing_file(self, tmp_path, messages):
-        file_path = tmp_path/'test.json'
-        with open(file_path, 'w') as file:
+        file_path = tmp_path / "test.json"
+        with open(file_path, "w") as file:
             json.dump(messages, file)
         return file_path
 
 
 class TestSave(FileHandlingFixtures):
     def test_should_save_to_json(self, tmp_path, messages):
-        file_path = tmp_path/'test.json'
+        file_path = tmp_path / "test.json"
 
         FileHandler.save_to_json(messages, str(file_path))
 
@@ -48,10 +40,9 @@ class TestLoad(FileHandlingFixtures):
         loaded_messages = FileHandler.read_from_json(file_path)
         assert loaded_messages == messages
 
-    def test_should_return_empty_list_when_loading_from_nonexistent_file(self, tmp_path):
-        file_path = tmp_path/"nonexistent.json"
+    def test_should_return_empty_list_when_loading_from_nonexistent_file(
+        self, tmp_path
+    ):
+        file_path = tmp_path / "nonexistent.json"
         loaded_messages = FileHandler.read_from_json(file_path)
         assert loaded_messages == []
-
-
-
