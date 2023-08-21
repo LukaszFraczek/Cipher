@@ -69,7 +69,9 @@ class MenuHandler:
 
         choice = self.get_dialog_choice(self.save_dialog)
 
-        if choice:
+        if choice is None:
+            return
+        elif choice:
             self.manager.save_to_file()
         else:
             msg_idx = self.get_msg_idx(MsgType.SAVE)
@@ -93,6 +95,9 @@ class MenuHandler:
             return
 
         new_rot = self.get_menu_choice(self.encode_menu)
+
+        if new_rot is None:
+            return
 
         success = self.manager.encode_message(msg_idx, new_rot)
         if not success:
