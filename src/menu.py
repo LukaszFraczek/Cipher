@@ -2,28 +2,30 @@ from typing import Callable, Any
 from abc import abstractmethod, ABC
 from dataclasses import dataclass
 
+from src.exceptions import MenuUniqueOptionError
+
 
 class MenuMsg:
-    INVALID_INPUT = 'Invalid input!'
-    INVALID_SELECTION = 'Invalid selection!'
+    INVALID_INPUT = "Invalid input!"
+    INVALID_SELECTION = "Invalid selection!"
 
-    INVALID_PATH = 'Invalid path!'
-    FILE_NOT_FOUND = 'File not found!'
+    INVALID_PATH = "Invalid path!"
+    FILE_NOT_FOUND = "File not found!"
 
-    INPUT_PATH = 'Input file path:\n'
-    INPUT_MSG_NUM = 'Input message number [1-{}] to {}:\n'
-    INPUT_NEW_MSG = 'Input new message:\n'
+    INPUT_PATH = "Input file path:\n"
+    INPUT_MSG_NUM = "Input message number [1-{}] to {}:\n"
+    INPUT_NEW_MSG = "Input new message:\n"
 
-    MSG_ADDED = 'Message successfully added!'
-    MSG_DELETED = 'Message successfully deleted!'
+    MSG_ADDED = "Message successfully added!"
+    MSG_DELETED = "Message successfully deleted!"
 
-    MSG_DECODED = 'Message successfully decoded from {}!'
-    MSG_ENCODED = 'Message successfully encoded to {}!'
+    MSG_DECODED = "Message successfully decoded from {}!"
+    MSG_ENCODED = "Message successfully encoded to {}!"
 
-    MSG_NOT_ENCODED = 'Message not encoded!'
-    MSG_IS_ENCODED = 'Message already encoded!'
+    MSG_NOT_ENCODED = "Message not encoded!"
+    MSG_IS_ENCODED = "Message already encoded!"
 
-    BUFFER_EMPTY = 'No messages to {}!'
+    BUFFER_EMPTY = "No messages to {}!"
 
 
 @dataclass
@@ -44,10 +46,16 @@ class Interface(ABC):
         self._ALLOWED_INPUTS = tuple([item.option for item in items])
         self._ITEMS = tuple([item for item in items])
         self._TITLE = title
+        self._check_input_list()
 
     @abstractmethod
     def display(self) -> None:
         raise NotImplementedError
+
+    def _check_input_list(self) -> None:
+        unique_inputs = set(self._ALLOWED_INPUTS)
+        if len(unique_inputs) != len(self._ALLOWED_INPUTS):
+            raise MenuUniqueOptionError
 
     def _validate_user_input(self, user_input: str) -> int:
         try:
@@ -74,7 +82,7 @@ class Menu(Interface):
     def display(self) -> None:
         print(self._TITLE)
         for item in self._ITEMS:
-            print(f'{item.option}. {item.description}')
+            print(f"{item.option}. {item.description}")
 
 
 class Dialog(Interface):
@@ -82,9 +90,9 @@ class Dialog(Interface):
         super().__init__(message, *items)
 
     def display(self) -> None:
-        print(f'{self._TITLE} [', end='')
+        print(f"{self._TITLE} [", end="")
         for item in self._ALLOWED_INPUTS:
             if item != self._ALLOWED_INPUTS[-1]:
-                print(f'{item}/', end='')
+                print(f"{item}/", end="")
                 continue
-            print(f'{item}]')
+            print(f"{item}]")
