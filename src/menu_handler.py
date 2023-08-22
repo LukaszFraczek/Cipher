@@ -13,13 +13,13 @@ class MenuHandler:
         # create a main menu
         self.main_menu = Menu(
             "MAIN MENU",
-            MenuItem("1", "Read messages from file", self.menu_read_from_file),
-            MenuItem("2", "Save messages to file", self.menu_save_to_file),
-            MenuItem("3", "New message", self.menu_new_message),
-            MenuItem("4", "Delete message", self.menu_delete_message),
-            MenuItem("5", "Decode message", self.menu_decode_message),
-            MenuItem("6", "Encode message", self.menu_encode_message),
-            MenuItem("7", "Show messages", self.menu_show_all_messages),
+            MenuItem("1", "Read messages from file", self.read_from_file),
+            MenuItem("2", "Save messages to file", self.save_to_file),
+            MenuItem("3", "New message", self.new_message),
+            MenuItem("4", "Delete message", self.delete_message),
+            MenuItem("5", "Decode message", self.decode_message),
+            MenuItem("6", "Encode message", self.encode_message),
+            MenuItem("7", "Show messages", self.show_all_messages),
             MenuItem("9", "Exit", self.manager.stop),
         )
 
@@ -58,11 +58,11 @@ class MenuHandler:
             return None
         return msg_idx
 
-    def menu_read_from_file(self) -> None:
+    def read_from_file(self) -> None:
         file_path = input(MenuMsg.INPUT_PATH)
         self.manager.read_from_file(file_path)
 
-    def menu_save_to_file(self) -> None:
+    def save_to_file(self) -> None:
         if not len(self.buffer):
             print(MenuMsg.BUFFER_EMPTY.format(MsgType.SAVE))
             return
@@ -79,7 +79,7 @@ class MenuHandler:
                 return
             self.manager.save_to_file(msg_idx)
 
-    def menu_decode_message(self) -> None:
+    def decode_message(self) -> None:
         msg_idx = self.get_msg_idx(MsgType.DECODE)
         if msg_idx is None:
             return
@@ -89,7 +89,7 @@ class MenuHandler:
             return
         print(MenuMsg.MSG_DECODED.format(rot))
 
-    def menu_encode_message(self) -> None:
+    def encode_message(self) -> None:
         msg_idx = self.get_msg_idx(MsgType.ENCODE)
         if msg_idx is None:
             return
@@ -105,19 +105,19 @@ class MenuHandler:
             return
         print(MenuMsg.MSG_ENCODED.format(new_rot))
 
-    def menu_delete_message(self) -> None:
+    def delete_message(self) -> None:
         msg_idx = self.get_msg_idx(MsgType.DELETE)
         if msg_idx is None:
             return
         self.manager.delete_message(msg_idx)
         print(MenuMsg.MSG_DELETED)
 
-    def menu_new_message(self) -> None:
+    def new_message(self) -> None:
         new_msg = input(MenuMsg.INPUT_NEW_MSG)
         self.manager.new_message(new_msg)
         print(MenuMsg.MSG_ADDED)
 
-    def menu_show_all_messages(self) -> None:
+    def show_all_messages(self) -> None:
         if not len(self.buffer):
             print(MenuMsg.BUFFER_EMPTY.format(MsgType.DISPLAY))
             return
