@@ -42,7 +42,7 @@ class Manager:
         try:
             method = decoding_method[rot_to_decode]
             self.buffer[msg_idx] = method(self.buffer[msg_idx])
-        except (KeyError, StatusError, RotEncryptionError, RotDecryptionError):
+        except (KeyError, StatusError, RotDecryptionError):
             return None
         return rot_to_decode
 
@@ -56,7 +56,7 @@ class Manager:
 
         try:
             self.buffer[msg_idx] = method(self.buffer[msg_idx])
-        except (StatusError, RotEncryptionError, RotDecryptionError):
+        except (StatusError, RotEncryptionError):
             return False
         return True
 
