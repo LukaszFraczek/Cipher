@@ -55,17 +55,17 @@ class TestMenu:
         name, items = valid_menu
 
         # Generate string from parameters for assertion
-        assert_string = name
+        expected_string = name
         for item in items:
             tmp = "\n" + item.option + ". " + item.description
-            assert_string += tmp
+            expected_string += tmp
             del tmp
 
         menu = Menu(name, *items)
         menu.display()
         text_capture = capsys.readouterr()
 
-        assert text_capture.out.strip() == assert_string
+        assert text_capture.out.strip() == expected_string
 
     def test_should_raise_error_when_provided_with_the_same_inputs(
         self, not_valid_menu
@@ -141,19 +141,19 @@ class TestDialog:
         title, items = valid_dialog
 
         # Generate string from parameters for assertion
-        assert_string = title + " ["
+        expected_string = title + " ["
         for dialog_item in items:
-            assert_string += dialog_item.option
+            expected_string += dialog_item.option
             if dialog_item != items[-1]:
-                assert_string += "/"
+                expected_string += "/"
             else:
-                assert_string += "]"
+                expected_string += "]"
 
         dialog = Dialog(title, *items)
         dialog.display()
         text_capture = capsys.readouterr()
 
-        assert text_capture.out.strip() == assert_string
+        assert text_capture.out.strip() == expected_string
 
     def test_should_raise_error_when_provided_with_the_same_inputs(
         self, not_valid_dialog
