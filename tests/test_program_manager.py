@@ -70,7 +70,7 @@ class TestLoadAndSave(ManagerFixtures):
         "msg_dict",
         [[{"text": "Hello", "rot_type": RotType.NONE, "status": Status.DECRYPTED}]],
     )
-    def test_should_as(self, mocker, manager, msg_dict):
+    def test_should_save_dict_to_file(self, mocker, manager, msg_dict):
         # Mock the menu's get_file_path method
         mocker.patch.object(manager.menu, "get_file_path", return_value="test.json")
 
