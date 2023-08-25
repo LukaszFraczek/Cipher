@@ -1,14 +1,15 @@
-from typing import Any
-
 from src.menu import Menu, MenuItem, Dialog, DialogItem, MenuMsg
-from src.constants import RotType, MsgType
+from src.constants import RotType, Status, MsgType
 from src.buffer import MessageBuffer
+from src.message import Message
+from src.manager_utils import ManagerUtilities
 
 
-class MenuHandler:
-    def __init__(self, manager, buffer: MessageBuffer) -> None:
-        self.buffer = buffer
-        self.manager = manager
+class Manager:
+    def __init__(self) -> None:
+        self.buffer: MessageBuffer = MessageBuffer()
+        self.utils: ManagerUtilities = ManagerUtilities(self.buffer)
+        self.__running: bool = True
 
         # create a main menu
         self.main_menu = Menu(
@@ -20,7 +21,7 @@ class MenuHandler:
             MenuItem("5", "Decode message", self.decode_message),
             MenuItem("6", "Encode message", self.encode_message),
             MenuItem("7", "Show messages", self.show_all_messages),
-            MenuItem("9", "Exit", self.manager.stop),
+            MenuItem("9", "Exit", self.stop),
         )
 
         # create an encoding option menu
@@ -37,84 +38,67 @@ class MenuHandler:
             DialogItem("N", lambda: False),
         )
 
-    def get_menu_choice(self, menu: Menu) -> Any:
-        menu.display()
-        return menu.select()
-
-    def get_dialog_choice(self, dialog: Dialog) -> Any:
-        dialog.display()
-        return dialog.select()
-
-    def get_file_path(self):
-        return input(MenuMsg.INPUT_PATH)
-
-    def get_msg_idx(self, action: MsgType) -> int | None:
-        try:
-            input_msg_num = MenuMsg.INPUT_MSG_NUM.format(len(self.buffer), action)
-            msg_idx = int(input(input_msg_num)) - 1
-            self.buffer.check_idx(msg_idx)
-        except (ValueError, IndexError):
-            print(MenuMsg.INVALID_INPUT)
-            return None
-        return msg_idx
-
     def read_from_file(self) -> None:
-        file_path = input(MenuMsg.INPUT_PATH)
-        self.manager.read_from_file(file_path)
+        file_path = self.utils.get_user_input(MenuMsg.INPUT_PATH)
+        self.utils.read_from_file(file_path)
 
     def save_to_file(self) -> None:
         if not len(self.buffer):
             print(MenuMsg.BUFFER_EMPTY.format(MsgType.SAVE))
             return
 
-        choice = self.get_dialog_choice(self.save_dialog)
+        choice = self.utils.get_dialog_choice(self.save_dialog)
 
         if choice is None:
             return
         elif choice:
-            self.manager.save_to_file()
+            self.utils.save_all_messages()
         else:
-            msg_idx = self.get_msg_idx(MsgType.SAVE)
+            msg_idx = self.utils.get_msg_idx(MsgType.SAVE)
             if msg_idx is None:
+                print(MenuMsg.INVALID_INPUT)
                 return
-            self.manager.save_to_file(msg_idx)
+            self.utils.save_single_message(msg_idx)
 
     def decode_message(self) -> None:
-        msg_idx = self.get_msg_idx(MsgType.DECODE)
+        msg_idx = self.utils.get_msg_idx(MsgType.DECODE)
         if msg_idx is None:
+            print(MenuMsg.INVALID_INPUT)
             return
-        rot = self.manager.decode_message(msg_idx)
+
+        rot = self.utils.decode_message(msg_idx)
         if not rot:
             print(MenuMsg.MSG_NOT_ENCODED)
             return
         print(MenuMsg.MSG_DECODED.format(rot))
 
     def encode_message(self) -> None:
-        msg_idx = self.get_msg_idx(MsgType.ENCODE)
+        msg_idx = self.utils.get_msg_idx(MsgType.ENCODE)
         if msg_idx is None:
+            print(MenuMsg.INVALID_INPUT)
             return
 
-        new_rot = self.get_menu_choice(self.encode_menu)
-
+        new_rot = self.utils.get_menu_choice(self.encode_menu)
         if new_rot is None:
             return
 
-        success = self.manager.encode_message(msg_idx, new_rot)
+        success = self.utils.encode_message(msg_idx, new_rot)
         if not success:
             print(MenuMsg.MSG_IS_ENCODED)
             return
         print(MenuMsg.MSG_ENCODED.format(new_rot))
 
     def delete_message(self) -> None:
-        msg_idx = self.get_msg_idx(MsgType.DELETE)
+        msg_idx = self.utils.get_msg_idx(MsgType.DELETE)
         if msg_idx is None:
+            print(MenuMsg.INVALID_INPUT)
             return
-        self.manager.delete_message(msg_idx)
+        self.buffer.remove(msg_idx)
         print(MenuMsg.MSG_DELETED)
 
     def new_message(self) -> None:
-        new_msg = input(MenuMsg.INPUT_NEW_MSG)
-        self.manager.new_message(new_msg)
+        new_msg = self.utils.get_user_input(MenuMsg.INPUT_NEW_MSG)
+        self.buffer.add(Message(new_msg, RotType.NONE, Status.DECRYPTED))
         print(MenuMsg.MSG_ADDED)
 
     def show_all_messages(self) -> None:
@@ -122,8 +106,16 @@ class MenuHandler:
             print(MenuMsg.BUFFER_EMPTY.format(MsgType.DISPLAY))
             return
 
-        for idx, msg in enumerate(self.buffer, 1):
+        for idx, msg in enumerate(self.buffer, 1):  # TODO MANAGER.
             print(
                 f"{idx}. Status: {msg.status.value}, Encryption: {msg.rot_type.value}"
             )
             print(msg.text)
+
+    def run(self) -> None:
+        while self.__running:
+            self.main_menu.display()
+            self.main_menu.select()
+
+    def stop(self) -> None:
+        self.__running = False
