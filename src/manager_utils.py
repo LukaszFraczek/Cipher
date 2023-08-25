@@ -1,12 +1,11 @@
 from __future__ import annotations
-from typing import Dict, Callable, Any
+from typing import Any
 
 from src.menu import MenuMsg, Menu, Dialog
 from src.buffer import MessageBuffer
 from src.message import Message
 from src.file_handling import FileHandler
-from src.encoding import Rot13, Rot47
-from src.constants import RotType, MsgType
+from src.constants import RotType, MsgType, ENCODING, DECODING
 from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
@@ -52,27 +51,17 @@ class ManagerUtilities:
         FileHandler.save_to_json(payload, file_path)
 
     def decode_message(self, msg_idx: int) -> RotType | None:
-        decoding_method: Dict[RotType, Callable] = {
-            RotType.ROT13: Rot13.decrypt,
-            RotType.ROT47: Rot47.decrypt,
-        }
-
         rot_to_decode = self.buffer[msg_idx].rot_type
 
         try:
-            method = decoding_method[rot_to_decode]
+            method = DECODING[rot_to_decode]
             self.buffer[msg_idx] = method(self.buffer[msg_idx])
         except (KeyError, StatusError, RotDecryptionError):
             return None
         return rot_to_decode
 
     def encode_message(self, msg_idx: int, new_rot: RotType) -> bool:
-        encoding_method: Dict[RotType, Callable] = {
-            RotType.ROT13: Rot13.encrypt,
-            RotType.ROT47: Rot47.encrypt,
-        }
-
-        method = encoding_method[new_rot]
+        method = ENCODING[new_rot]
 
         try:
             self.buffer[msg_idx] = method(self.buffer[msg_idx])
