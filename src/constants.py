@@ -1,6 +1,4 @@
 from enum import StrEnum
-from typing import Dict, Callable
-from src.encoding import Rot13, Rot47
 
 
 class RotType(StrEnum):
@@ -20,14 +18,3 @@ class MsgType(StrEnum):
     SAVE = "save"
     DELETE = "delete"
     DISPLAY = "display"
-
-
-ENCODING: Dict[RotType, Callable] = {
-    RotType.ROT13: Rot13.encrypt,
-    RotType.ROT47: Rot47.encrypt,
-}
-
-DECODING: Dict[RotType, Callable] = {
-    RotType.ROT13: Rot13.decrypt,
-    RotType.ROT47: Rot47.decrypt,
-}

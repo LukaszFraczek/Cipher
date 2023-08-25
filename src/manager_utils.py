@@ -5,7 +5,8 @@ from src.menu import MenuMsg, Menu, Dialog
 from src.buffer import MessageBuffer
 from src.message import Message
 from src.file_handling import FileHandler
-from src.constants import RotType, MsgType, ENCODING, DECODING
+from src.constants import RotType, MsgType
+from src.encoding import ENCODING, DECODING
 from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
