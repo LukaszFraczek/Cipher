@@ -93,6 +93,7 @@ class Manager:
         if msg_idx is None:
             print(MenuMsg.INVALID_INPUT)
             return
+
         self.buffer.remove(msg_idx)
         print(MenuMsg.MSG_DELETED)
 
@@ -106,11 +107,8 @@ class Manager:
             print(MenuMsg.BUFFER_EMPTY.format(MsgType.DISPLAY))
             return
 
-        for idx, msg in enumerate(self.buffer, 1):  # TODO MANAGER.
-            print(
-                f"{idx}. Status: {msg.status.value}, Encryption: {msg.rot_type.value}"
-            )
-            print(msg.text)
+        for idx, msg in enumerate(self.buffer, 1):
+            self.utils.display_msg(msg, idx)
 
     def run(self) -> None:
         while self.__running:
