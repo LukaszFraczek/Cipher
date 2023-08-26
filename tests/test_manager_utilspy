@@ -1,6 +1,6 @@
 import pytest
 
-from src.program_manager import Manager
+from src.manager_utils import ManagerUtilities
 from src.file_handling import FileHandler
 from src.message import Message
 from src.constants import RotType, Status

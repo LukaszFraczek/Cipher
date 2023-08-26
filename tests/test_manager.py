@@ -1,7 +1,7 @@
 import pytest
 
 from src.menu import Menu, MenuItem, Dialog, DialogItem, MenuMsg
-from src.menu_handler import MenuHandler
+from src.manager import MenuHandler
 from src.message import Message
 from src.constants import RotType, Status
 
