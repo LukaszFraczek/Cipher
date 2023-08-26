@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABC
 from copy import copy
+from typing import Dict, Callable
 import string
 
 from src.message import Message
@@ -32,7 +33,7 @@ class RotEncryption(ABC):
     def decrypt(cls, data: Message) -> Message:
         if data.status == Status.DECRYPTED:
             raise StatusError(Status.DECRYPTED)
-        if data.rot_type == RotType.NONE:
+        if data.rot_type != cls._ROT_TYPE:
             raise RotDecryptionError
 
         result = copy(data)
@@ -59,7 +60,7 @@ class Rot47(RotEncryption):
 
     @classmethod
     def _translate(cls, text: str) -> str:
-        output = ''
+        output = ""
         for letter in text:
             letter_ucp = ord(letter)
             if 33 <= letter_ucp <= 79:
@@ -70,3 +71,12 @@ class Rot47(RotEncryption):
         return output
 
 
+ENCODING: Dict[RotType, Callable] = {
+    RotType.ROT13: Rot13.encrypt,
+    RotType.ROT47: Rot47.encrypt,
+}
+
+DECODING: Dict[RotType, Callable] = {
+    RotType.ROT13: Rot13.decrypt,
+    RotType.ROT47: Rot47.decrypt,
+}

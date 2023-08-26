@@ -1,4 +1,4 @@
-from src.program_manager import Manager
+from src.manager import Manager
 
 
 def main():
@@ -6,5 +6,5 @@ def main():
     program.run()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
