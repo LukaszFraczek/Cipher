@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any
+from typing import Any, Optional
 
 from src.menu import MenuMsg, Menu, Dialog
 from src.buffer import MessageBuffer
@@ -14,17 +14,6 @@ class ManagerUtilities:
     def __init__(self, buffer: MessageBuffer):
         self.buffer: MessageBuffer = buffer
 
-    def get_menu_choice(self, menu: Menu) -> Any:
-        menu.display()
-        return menu.select()
-
-    def get_dialog_choice(self, dialog: Dialog) -> Any:
-        dialog.display()
-        return dialog.select()
-
-    def get_user_input(self, menu_msg: MenuMsg):
-        return input(menu_msg)
-
     def get_msg_idx(self, input_type: MsgType) -> int | None:
         try:
             user_input = self.get_user_input(
@@ -35,6 +24,17 @@ class ManagerUtilities:
         except (ValueError, IndexError):
             return None
         return msg_idx
+
+    def get_user_input(self, menu_msg: MenuMsg):
+        return input(menu_msg)
+
+    def get_menu_choice(self, menu: Menu) -> Any:
+        menu.display()
+        return menu.select()
+
+    def get_dialog_choice(self, dialog: Dialog) -> Any:
+        dialog.display()
+        return dialog.select()
 
     def read_from_file(self, file_path: str) -> None:
         msg_list = FileHandler.read_from_json(file_path)
@@ -69,3 +69,11 @@ class ManagerUtilities:
         except (StatusError, RotEncryptionError):
             return False
         return True
+
+    def display_msg(self, msg: Message, num: Optional[int] = None):
+        msg_status = ""
+        if num:
+            msg_status += f"{num}. "
+        msg_status += f"Status: {msg.status.value}, Encryption: {msg.rot_type.value}"
+        print(msg_status)
+        print(msg.text)
