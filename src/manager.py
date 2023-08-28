@@ -66,7 +66,7 @@ class Manager:
             print(MenuMsg.INVALID_INPUT)
             return
 
-        rot = self.utils.decode_message(msg_idx)
+        rot = self.utils.decode_message_in_buffer(msg_idx)
         if not rot:
             print(MenuMsg.MSG_NOT_ENCODED)
             return
@@ -82,7 +82,7 @@ class Manager:
         if new_rot is None:
             return
 
-        success = self.utils.encode_message(msg_idx, new_rot)
+        success = self.utils.encode_message_in_buffer(msg_idx, new_rot)
         if not success:
             print(MenuMsg.MSG_IS_ENCODED)
             return

@@ -51,7 +51,7 @@ class ManagerUtilities:
         file_path = self.get_user_input(MenuMsg.INPUT_PATH)
         FileHandler.save_to_json(payload, file_path)
 
-    def decode_message(self, msg_idx: int) -> RotType | None:
+    def decode_message_in_buffer(self, msg_idx: int) -> RotType | None:
         rot_to_decode = self.buffer[msg_idx].rot_type
 
         try:
@@ -61,7 +61,7 @@ class ManagerUtilities:
             return None
         return rot_to_decode
 
-    def encode_message(self, msg_idx: int, new_rot: RotType) -> bool:
+    def encode_message_in_buffer(self, msg_idx: int, new_rot: RotType) -> bool:
         method = ENCODING[new_rot]
 
         try:
