@@ -3,6 +3,7 @@ from src.constants import RotType, Status, MsgType
 from src.buffer import MessageBuffer
 from src.message import Message
 from src.manager_utils import ManagerUtilities
+from src.encoding import ENCODING, DECODING
 
 
 class Manager:
@@ -66,10 +67,11 @@ class Manager:
             print(MenuMsg.INVALID_INPUT)
             return
 
-        rot = self.utils.decode_message_in_buffer(msg_idx)
-        if not rot:
+        if self.utils.check_msg_status(msg_idx, Status.DECRYPTED):
             print(MenuMsg.MSG_NOT_ENCODED)
             return
+
+        rot = self.utils.decode_message_in_buffer(msg_idx)
         print(MenuMsg.MSG_DECODED.format(rot))
 
     def encode_message(self) -> None:
@@ -78,14 +80,15 @@ class Manager:
             print(MenuMsg.INVALID_INPUT)
             return
 
+        if self.utils.check_msg_status(msg_idx, Status.ENCRYPTED):
+            print(MenuMsg.MSG_IS_ENCODED)
+            return
+
         new_rot = self.utils.get_menu_choice(self.encode_menu)
         if new_rot is None:
             return
 
-        success = self.utils.encode_message_in_buffer(msg_idx, new_rot)
-        if not success:
-            print(MenuMsg.MSG_IS_ENCODED)
-            return
+        self.utils.encode_message_in_buffer(msg_idx, new_rot)
         print(MenuMsg.MSG_ENCODED.format(new_rot))
 
     def delete_message(self) -> None:
