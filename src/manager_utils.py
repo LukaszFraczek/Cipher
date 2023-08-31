@@ -7,7 +7,6 @@ from src.message import Message
 from src.file_handling import FileHandler
 from src.constants import RotType, Status, MsgType
 from src.encoding import ENCODING, DECODING
-from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
 class ManagerUtilities:

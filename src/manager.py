@@ -3,7 +3,6 @@ from src.constants import RotType, Status, MsgType
 from src.buffer import MessageBuffer
 from src.message import Message
 from src.manager_utils import ManagerUtilities
-from src.encoding import ENCODING, DECODING
 
 
 class Manager:
