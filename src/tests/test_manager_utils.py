@@ -1,11 +1,9 @@
 import pytest
 
-from src.manager_utils import ManagerUtilities
+from src.base import Message, RotType, Status, StatusError, RotEncryptionError
 from src.buffer import MessageBuffer
 from src.file_handling import FileHandler
-from src.message import Message
-from src.constants import RotType, Status
-from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
+from src.manager import ManagerUtilities
 
 
 class ManagerUtilsFixtures:
@@ -41,7 +39,7 @@ class TestLoadAndSave(ManagerUtilsFixtures):
 
         # Mock user input method
         mocker.patch(
-            "src.manager_utils.ManagerUtilities.get_user_input",
+            "src.manager.ManagerUtilities.get_user_input",
             return_value="test.json",
         )
 
@@ -65,7 +63,7 @@ class TestLoadAndSave(ManagerUtilsFixtures):
 
         # Mock user input method
         mocker.patch(
-            "src.manager_utils.ManagerUtilities.get_user_input",
+            "src.manager.ManagerUtilities.get_user_input",
             return_value="test.json",
         )
 
@@ -80,13 +78,122 @@ class TestLoadAndSave(ManagerUtilsFixtures):
         )
 
 
+class TestRot13EncodingAndDecoding(ManagerUtilsFixtures):
+    def test_should_encode_message(self, manager_utils):
+        msg_to_encrypt = Message("Hello", RotType.NONE, Status.DECRYPTED)
+        msg_expected = Message("Uryyb", RotType.ROT13, Status.ENCRYPTED)
+
+        manager_utils.buffer.memory.append(msg_to_encrypt)
+        manager_utils.encode_message_in_buffer(0, RotType.ROT13)
+
+        assert manager_utils.buffer[0] == msg_expected
+
+    @pytest.mark.parametrize(
+        "msg, expected_error",
+        [
+            (Message("Hello", RotType.NONE, Status.ENCRYPTED), StatusError),
+            (Message("Hello", RotType.ROT13, Status.DECRYPTED), RotEncryptionError),
+        ],
+    )
+    def test_should_fail_encoding(self, manager_utils, msg, expected_error):
+        manager_utils.buffer.memory.append(msg)
+
+        with pytest.raises(expected_error):
+            manager_utils.encode_message_in_buffer(0, RotType.ROT13)
+
+        assert manager_utils.buffer[0] == msg  # msg should remain unchanged
+
+    @pytest.mark.parametrize(
+        "msg_expected, msg_to_decrypt",
+        [
+            (
+                Message("Hello", RotType.NONE, Status.DECRYPTED),
+                Message("Uryyb", RotType.ROT13, Status.ENCRYPTED),
+            )
+        ],
+    )
+    def test_should_decode_message(self, manager_utils, msg_expected, msg_to_decrypt):
+        manager_utils.buffer.memory.append(msg_to_decrypt)
+
+        result = manager_utils.decode_message_in_buffer(0)
+
+        assert result == RotType.ROT13
+        assert manager_utils.buffer[0] == msg_expected
+
+    @pytest.mark.parametrize(
+        "msg, expected_error",
+        [
+            (Message("MockText", RotType.ROT13, Status.DECRYPTED), StatusError),
+            (Message("MockText", RotType.NONE, Status.ENCRYPTED), KeyError),
+        ],
+    )
+    def test_should_fail_decoding(self, manager_utils, msg, expected_error):
+        manager_utils.buffer.memory.append(msg)
+
+        with pytest.raises(expected_error):
+            manager_utils.decode_message_in_buffer(0)
+
+        assert manager_utils.buffer[0] == msg  # msg should remain unchanged
+
+
+class TestRot47EncodingAndDecoding(ManagerUtilsFixtures):
+    def test_should_encode_message(self, manager_utils):
+        msg_to_encrypt = Message("Hello", RotType.NONE, Status.DECRYPTED)
+        msg_expected = Message("w6==@", RotType.ROT47, Status.ENCRYPTED)
+
+        manager_utils.buffer.memory.append(msg_to_encrypt)
+        manager_utils.encode_message_in_buffer(0, RotType.ROT47)
+
+        assert manager_utils.buffer[0] == msg_expected
+
+    @pytest.mark.parametrize(
+        "msg, expected_error",
+        [
+            (Message("Hello", RotType.NONE, Status.ENCRYPTED), StatusError),
+            (Message("Hello", RotType.ROT47, Status.DECRYPTED), RotEncryptionError),
+        ],
+    )
+    def test_should_fail_encoding(self, manager_utils, msg, expected_error):
+        manager_utils.buffer.memory.append(msg)
+
+        with pytest.raises(expected_error):
+            manager_utils.encode_message_in_buffer(0, RotType.ROT47)
+
+        assert manager_utils.buffer[0] == msg  # msg should remain unchanged
+
+    @pytest.mark.parametrize(
+        "msg_expected, msg_to_decrypt",
+        [
+            (
+                Message("Hello", RotType.NONE, Status.DECRYPTED),
+                Message("w6==@", RotType.ROT47, Status.ENCRYPTED),
+            )
+        ],
+    )
+    def test_should_decode_message(self, manager_utils, msg_expected, msg_to_decrypt):
+        manager_utils.buffer.memory.append(msg_to_decrypt)
+
+        result = manager_utils.decode_message_in_buffer(0)
+
+        assert result == RotType.ROT47
+        assert manager_utils.buffer[0] == msg_expected
+
+    @pytest.mark.parametrize(
+        "msg, expected_error",
+        [
+            (Message("MockText", RotType.ROT47, Status.DECRYPTED), StatusError),
+            (Message("MockText", RotType.NONE, Status.ENCRYPTED), KeyError),
+        ],
+    )
+    def test_should_fail_decoding(self, manager_utils, msg, expected_error):
+        manager_utils.buffer.memory.append(msg)
+
+        with pytest.raises(expected_error):
+            manager_utils.decode_message_in_buffer(0)
+
+        assert manager_utils.buffer[0] == msg  # msg should remain unchanged
+
+
 # get_msg_idx
 # get_user_input
-# get_menu_choice
-# get_dialog_choice
-# read_from_file            x
-# save_all_messages         x
-# save_single_message       x
-# decode_message_in_buffer
-# encode_message_in_buffer
 # display_msg

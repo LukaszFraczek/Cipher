@@ -1,9 +1,14 @@
 import pytest
 
+from src.base import (
+    Message,
+    RotType,
+    Status,
+    StatusError,
+    RotEncryptionError,
+    RotDecryptionError,
+)
 from src.encoding import Rot13, Rot47
-from src.message import Message
-from src.constants import RotType, Status
-from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
 
 
 class TestTranslationMethods:
