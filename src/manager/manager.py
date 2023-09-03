@@ -1,8 +1,7 @@
-from src.menu import Menu, MenuItem, Dialog, DialogItem, MenuMsg
-from src.constants import RotType, Status, MsgType
+from src.base import RotType, Status, MsgType, Message
 from src.buffer import MessageBuffer
-from src.message import Message
-from src.manager_utils import ManagerUtilities
+from .manager_utils import ManagerUtilities
+from src.menu import Menu, MenuItem, Dialog, DialogItem, MenuMsg
 
 
 class Manager:

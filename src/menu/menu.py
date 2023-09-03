@@ -2,7 +2,7 @@ from typing import Callable, Any
 from abc import abstractmethod, ABC
 from dataclasses import dataclass
 
-from src.exceptions import MenuUniqueOptionError
+from src.base import MenuUniqueOptionError
 
 
 class MenuMsg:

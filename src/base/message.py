@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict
 
-from src.constants import RotType, Status
+from .constants import RotType, Status
 
 
 @dataclass
@@ -17,9 +17,4 @@ class Message:
 
     @classmethod
     def from_dict(cls, item: Dict[str, str]) -> Message:
-        return cls(
-            item['text'],
-            RotType(item['rot_type']),
-            Status(item['status'])
-        )
-
+        return cls(item["text"], RotType(item["rot_type"]), Status(item["status"]))
