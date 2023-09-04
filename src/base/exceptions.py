@@ -1,4 +1,4 @@
-from src.constants import Status
+from .constants import Status
 
 
 class StatusError(ValueError):

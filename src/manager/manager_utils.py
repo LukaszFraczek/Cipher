@@ -1,13 +1,11 @@
 from __future__ import annotations
 from typing import Any, Optional
 
-from src.menu import MenuMsg, Menu, Dialog
+from src.base import RotType, Status, MsgType, Message
 from src.buffer import MessageBuffer
-from src.message import Message
-from src.file_handling import FileHandler
-from src.constants import RotType, MsgType
 from src.encoding import ENCODING, DECODING
-from src.exceptions import StatusError, RotEncryptionError, RotDecryptionError
+from src.file_handling import FileHandler
+from src.menu import MenuMsg, Menu, Dialog
 
 
 class ManagerUtilities:
@@ -51,24 +49,20 @@ class ManagerUtilities:
         file_path = self.get_user_input(MenuMsg.INPUT_PATH)
         FileHandler.save_to_json(payload, file_path)
 
-    def decode_message_in_buffer(self, msg_idx: int) -> RotType | None:
+    def decode_message_in_buffer(self, msg_idx: int) -> RotType:
         rot_to_decode = self.buffer[msg_idx].rot_type
-
-        try:
-            method = DECODING[rot_to_decode]
-            self.buffer[msg_idx] = method(self.buffer[msg_idx])
-        except (KeyError, StatusError, RotDecryptionError):
-            return None
+        method = DECODING[rot_to_decode]
+        self.buffer[msg_idx] = method(self.buffer[msg_idx])
         return rot_to_decode
 
-    def encode_message_in_buffer(self, msg_idx: int, new_rot: RotType) -> bool:
+    def encode_message_in_buffer(self, msg_idx: int, new_rot: RotType) -> None:
         method = ENCODING[new_rot]
+        self.buffer[msg_idx] = method(self.buffer[msg_idx])
 
-        try:
-            self.buffer[msg_idx] = method(self.buffer[msg_idx])
-        except (StatusError, RotEncryptionError):
-            return False
-        return True
+    def check_msg_status(self, msg_idx: int, status: Status) -> bool:
+        if self.buffer[msg_idx].status == status:
+            return True
+        return False
 
     def display_msg(self, msg: Message, num: Optional[int] = None):
         msg_status = ""

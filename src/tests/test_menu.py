@@ -1,7 +1,7 @@
 import pytest
 
+from src.base import MenuUniqueOptionError
 from src.menu import MenuMsg, MenuItem, DialogItem, Menu, Dialog
-from src.exceptions import MenuUniqueOptionError
 
 
 class TestMenu:
