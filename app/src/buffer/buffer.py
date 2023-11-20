@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from src.base import Message
+from ..base import Message
 
 
 class MessageBuffer:

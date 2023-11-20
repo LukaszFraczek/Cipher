@@ -3,7 +3,7 @@ from copy import copy
 from typing import Dict, Callable
 import string
 
-from src.base import (
+from ..base import (
     RotType,
     Status,
     Message,

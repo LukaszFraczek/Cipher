@@ -1,6 +1,6 @@
 import pytest
 
-from src.base import RotType, Status, Message
+from ..src.base import RotType, Status, Message
 
 
 class TestMessage:

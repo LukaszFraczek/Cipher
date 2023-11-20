@@ -1,7 +1,7 @@
 import pytest
 
-from src.base import Message, RotType, Status
-from src.buffer import MessageBuffer
+from ..src.base import Message, RotType, Status
+from ..src.buffer import MessageBuffer
 
 
 class TestMessageBuffer:
