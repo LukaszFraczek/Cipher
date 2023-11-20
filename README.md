@@ -1,13 +1,36 @@
 # Cipher
-## What is it?
-Cipher is a simple terminal app with which you can code and decode messages in Rot13/Rot47.
-## What can it do?
-- Read messages from the *.json files
-- Save messages to the *.json files.
+
+Simple terminal app with which you can code and decode messages in Rot13/Rot47.
+
+## Features
+
+- Read and save messages from the *.json files
 - Create new messages from within the program.
 - Encode and decode messages in Rot13 and Rot47
 - Show messages stored in program memory
-## How do I use it?
-UI of this app is extremely simple, and for the most part, self explainatory. Every available option is described noet to the required input.
 
-![obraz](https://github.com/LukaszFraczek/Cipher/assets/30197518/399be6e6-728d-45cf-9d65-027e883b6cd4)
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/LukaszFraczek/Cipher
+```
+
+2. Install the project dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+## Launching the app
+
+1. Run the app from root folderr:
+```bash
+python app\main.py
+```
+
+## How do I use it?
+
+As for most console apps, user inputs and corresponding options are clearly described in the console after launching the app.
+For the purpose of saving and loading files with messages, the app folder is treated as root folder.
+
+![obraz](https://github.com/LukaszFraczek/Cipher/assets/30197518/97b7199f-ddd3-4217-89d5-67322ea3bd03)
