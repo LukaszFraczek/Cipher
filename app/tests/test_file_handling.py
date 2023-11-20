@@ -1,7 +1,7 @@
 import json
 import pytest
 
-from src.file_handling import FileHandler
+from ..src.file_handling import FileHandler
 
 
 class FileHandlingFixtures:

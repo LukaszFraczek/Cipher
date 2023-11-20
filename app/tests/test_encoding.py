@@ -1,6 +1,6 @@
 import pytest
 
-from src.base import (
+from ..src.base import (
     Message,
     RotType,
     Status,
@@ -8,7 +8,7 @@ from src.base import (
     RotEncryptionError,
     RotDecryptionError,
 )
-from src.encoding import Rot13, Rot47
+from ..src.encoding import Rot13, Rot47
 
 
 class TestTranslationMethods:

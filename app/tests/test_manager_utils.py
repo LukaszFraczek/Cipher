@@ -1,9 +1,9 @@
 import pytest
 
-from src.base import Message, RotType, Status, StatusError, RotEncryptionError
-from src.buffer import MessageBuffer
-from src.file_handling import FileHandler
-from src.manager import ManagerUtilities
+from ..src.base import Message, RotType, Status, StatusError, RotEncryptionError
+from ..src.buffer import MessageBuffer
+from ..src.file_handling import FileHandler
+from ..src.manager import ManagerUtilities
 
 
 class ManagerUtilsFixtures:

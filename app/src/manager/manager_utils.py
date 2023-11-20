@@ -1,11 +1,11 @@
 from __future__ import annotations
 from typing import Any, Optional
 
-from src.base import RotType, Status, MsgType, Message
-from src.buffer import MessageBuffer
-from src.encoding import ENCODING, DECODING
-from src.file_handling import FileHandler
-from src.menu import MenuMsg, Menu, Dialog
+from ..base import RotType, Status, MsgType, Message
+from ..buffer import MessageBuffer
+from ..encoding import ENCODING, DECODING
+from ..file_handling import FileHandler
+from ..menu import MenuMsg, Menu, Dialog
 
 
 class ManagerUtilities:
