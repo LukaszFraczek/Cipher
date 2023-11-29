@@ -14,7 +14,7 @@ Simple terminal app with which you can code and decode messages in Rot13/Rot47.
 1. Clone the repository:
 ```bash
 git clone https://github.com/LukaszFraczek/Cipher
-cd FlaskFilm
+cd Cipher
 ```
 
 2. Set up a Python virtual environment (optional but recommended):
